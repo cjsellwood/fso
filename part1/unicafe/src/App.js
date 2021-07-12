@@ -8,15 +8,30 @@ const Statistics = ({ good, neutral, bad }) => {
   if (good + neutral + bad === 0) {
     return <p>No feedback given</p>;
   }
+
   return (
     <div>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {good + neutral + bad}</p>
-      <p>average {(good + neutral * 0 + bad * -1) / (good + neutral + bad)}</p>
-      <p>positive {(100 * good) / (good + neutral + bad)} %</p>
+      <Statistic text="good" value={good} />
+      <Statistic text="neutral" value={neutral} />
+      <Statistic text="bad" value={bad} />
+      <Statistic text="all" value={good + neutral + bad} />
+      <Statistic
+        text="average"
+        value={(good + neutral * 0 + bad * -1) / (good + neutral + bad)}
+      />
+      <Statistic
+        text="positive"
+        value={(100 * good) / (good + neutral + bad) + " %"}
+      />
     </div>
+  );
+};
+
+const Statistic = ({ value, text }) => {
+  return (
+    <p>
+      {text} {value}
+    </p>
   );
 };
 
