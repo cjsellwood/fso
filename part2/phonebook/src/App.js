@@ -3,9 +3,14 @@ import React, { useState } from "react";
 const App = () => {
   const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
   const changeName = (e) => {
     setNewName(e.target.value);
+  };
+
+  const changeNumber = (e) => {
+    setNewNumber(e.target.value);
   };
 
   const submitName = (e) => {
@@ -16,7 +21,7 @@ const App = () => {
       return;
     }
 
-    setPersons([...persons, { name: newName }]);
+    setPersons([...persons, { name: newName, number: newNumber }]);
     setNewName("");
   };
 
@@ -28,13 +33,18 @@ const App = () => {
           name: <input value={newName} onChange={changeName} />
         </div>
         <div>
+          name: <input value={newNumber} onChange={changeNumber} />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       <ul>
         {persons.map((person) => (
-          <li key={person.name}>{person.name}</li>
+          <li key={person.name}>
+            {person.name} {person.number}
+          </li>
         ))}
       </ul>
     </div>
