@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import Filter from "./components/Filter";
+import NewEntry from "./components/NewEntry";
+import Persons from "./components/Persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -23,7 +26,7 @@ const App = () => {
     setSearch(e.target.value);
   };
 
-  const submitName = (e) => {
+  const submitEntry = (e) => {
     e.preventDefault();
 
     if (persons.find((person) => person.name === newName)) {
@@ -38,31 +41,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input value={search} onChange={changeSearch} />
-      </div>
+      <Filter search={search} changeSearch={changeSearch} />
       <h3>Add a new</h3>
-      <form onSubmit={submitName}>
-        <div>
-          name: <input value={newName} onChange={changeName} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={changeNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <NewEntry
+        newName={newName}
+        newNumber={newNumber}
+        changeName={changeName}
+        changeNumber={changeNumber}
+        submitEntry={submitEntry}
+      />
+
       <h3>Numbers</h3>
-      <ul>
-        {persons
-          .filter((person) => person.name.includes(search))
-          .map((person) => (
-            <li key={person.name}>
-              {person.name} {person.number}
-            </li>
-          ))}
-      </ul>
+      <Persons persons={persons} search={search} />
     </div>
   );
 };
