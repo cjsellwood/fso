@@ -1,10 +1,16 @@
-const Total = (props) => {
+import React from "react";
+
+const Total = ({ parts }) => {
+  console.log(parts);
   return (
     <p>
-      Number of exercises{" "}
-      {props.parts[0].exercises +
-        props.parts[1].exercises +
-        props.parts[2].exercises}
+      <strong>
+        total of{" "}
+        {parts.reduce((acc, cur) => {
+          return acc + cur.exercises;
+        }, 0)}{" "}
+        exercises
+      </strong>
     </p>
   );
 };
