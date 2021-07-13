@@ -1,7 +1,6 @@
 import React from "react";
 
 const Total = ({ parts }) => {
-  console.log(parts);
   return (
     <p>
       <strong>
