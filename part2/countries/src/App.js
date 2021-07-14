@@ -21,6 +21,10 @@ const App = () => {
     );
   };
 
+  const showCountry = (name) => {
+    setFilterCountries(countries.filter((country) => country.name === name));
+  };
+
   return (
     <div>
       <form>
@@ -49,7 +53,10 @@ const App = () => {
       ) : (
         <ul>
           {filterCountries.map((country) => (
-            <li key={country.name}>{country.name}</li>
+            <li key={country.name}>
+              {country.name}
+              <button onClick={() => showCountry(country.name)}>show</button>
+            </li>
           ))}
         </ul>
       )}
