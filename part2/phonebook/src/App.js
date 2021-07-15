@@ -44,7 +44,18 @@ const App = () => {
       .then((newPerson) => {
         setPersons([...persons, newPerson]);
         setNewName("");
+        setNewNumber("");
       });
+  };
+
+  const deletePerson = (id) => {
+    const person = persons.find((person) => person.id === id);
+    if (!window.confirm(`Delete ${person.name} from phonebook`)) {
+      return;
+    }
+    personsService.deleteEntry(id).then((data) => {
+      setPersons(persons.filter((person) => person.id !== id));
+    });
   };
 
   return (
@@ -61,7 +72,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={persons} search={search} />
+      <Persons persons={persons} search={search} deletePerson={deletePerson} />
     </div>
   );
 };
