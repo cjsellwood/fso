@@ -24,6 +24,16 @@ let notes = [
   },
 ];
 
+const requestLogger = (req, res, next) => {
+  console.log("Method:", req.method);
+  console.log("Path:  ", req.path);
+  console.log("Body:  ", req.body);
+  console.log("---");
+  next();
+};
+
+app.use(requestLogger);
+
 app.get("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
 });
@@ -74,6 +84,12 @@ app.post("/api/notes", (req, res) => {
 
   res.json(note);
 });
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 const PORT = 3001;
 app.listen(PORT, () => {
