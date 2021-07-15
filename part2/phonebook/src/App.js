@@ -5,6 +5,7 @@ import NewEntry from "./components/NewEntry";
 import Persons from "./components/Persons";
 import personsService from "./services/persons";
 import SuccessMessage from "./components/SuccessMessage";
+import ErrorMessage from "./components/ErrorMessage";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     personsService.getAll().then((returnedPersons) => {
@@ -56,6 +58,14 @@ const App = () => {
             setTimeout(() => {
               setSuccess(null);
             }, 5000);
+          })
+          .catch((error) => {
+            setError(
+              `Information of ${newName} has already been removed from the server`
+            );
+            setTimeout(() => {
+              setError(null);
+            }, 5000);
           });
       }
       return;
@@ -97,6 +107,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <SuccessMessage message={success} />
+      <ErrorMessage message={error} />
       <Filter search={search} changeSearch={changeSearch} />
       <h3>Add a new</h3>
       <NewEntry

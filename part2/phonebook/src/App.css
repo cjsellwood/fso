@@ -5,3 +5,11 @@
   font-size: 20px;
   padding: 16px;
 }
+
+.error {
+  background-color: rgb(221, 221, 221);
+  color: red;
+  border: 2px solid red;
+  font-size: 20px;
+  padding: 16px;
+}
