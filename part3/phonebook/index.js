@@ -28,6 +28,16 @@ app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
 
+app.get("/api/persons/:id", (req, res) => {
+  const { id } = req.params;
+  const person = persons.find((person) => person.id === Number(id));
+
+  if (!person) {
+    return res.status(404).json({ error: "person not found" });
+  }
+  res.json(person);
+});
+
 app.get("/info", (req, res) => {
   res.send(
     `<div>
