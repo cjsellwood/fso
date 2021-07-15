@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
+import "./App.css";
 import Filter from "./components/Filter";
 import NewEntry from "./components/NewEntry";
 import Persons from "./components/Persons";
 import personsService from "./services/persons";
+import SuccessMessage from "./components/SuccessMessage";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     personsService.getAll().then((returnedPersons) => {
@@ -48,6 +51,11 @@ const App = () => {
             );
             setNewName("");
             setNewNumber("");
+            setSuccess(`Updated the number of ${newName}`);
+
+            setTimeout(() => {
+              setSuccess(null);
+            }, 5000);
           });
       }
       return;
@@ -62,6 +70,11 @@ const App = () => {
         setPersons([...persons, newPerson]);
         setNewName("");
         setNewNumber("");
+        setSuccess(`Added ${newPerson.name}`);
+
+        setTimeout(() => {
+          setSuccess(null);
+        }, 5000);
       });
   };
 
@@ -72,12 +85,18 @@ const App = () => {
     }
     personsService.deleteEntry(id).then((data) => {
       setPersons(persons.filter((person) => person.id !== id));
+      setSuccess(`Deleted ${person.name}`);
+
+      setTimeout(() => {
+        setSuccess(null);
+      }, 5000);
     });
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <SuccessMessage message={success} />
       <Filter search={search} changeSearch={changeSearch} />
       <h3>Add a new</h3>
       <NewEntry
