@@ -1,8 +1,8 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import NewEntry from "./components/NewEntry";
 import Persons from "./components/Persons";
+import personsService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,8 +11,8 @@ const App = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    personsService.getAll().then((returnedPersons) => {
+      setPersons(returnedPersons);
     });
   }, []);
 
@@ -36,8 +36,15 @@ const App = () => {
       return;
     }
 
-    setPersons([...persons, { name: newName, number: newNumber }]);
-    setNewName("");
+    personsService
+      .create({
+        name: newName,
+        number: newNumber,
+      })
+      .then((newPerson) => {
+        setPersons([...persons, newPerson]);
+        setNewName("");
+      });
   };
 
   return (
