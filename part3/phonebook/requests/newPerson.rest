@@ -5,3 +5,22 @@ Content-Type: application/json
   "name": "Jack",
   "number": "0123456789"
 }
+
+###
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Dave"
+}
+
+###
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Arto Hellas",
+  "number": "8888888888"
+}

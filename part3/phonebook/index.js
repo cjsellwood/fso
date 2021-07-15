@@ -56,6 +56,18 @@ app.delete("/api/persons/:id", (req, res) => {
 app.post("/api/persons", (req, res) => {
   const { name, number } = req.body;
 
+  // If name or number not defined
+  if (!name || !number) {
+    return res
+      .status(400)
+      .json({ error: !name ? "Name not defined" : "Number not defined" });
+  }
+
+  // If name already exists
+  if (persons.find((person) => person.name === name)) {
+    return res.status(400).json({ error: "Person already in phonebook" });
+  }
+
   const id = Math.floor(Math.random() * 10 ** 9);
   const newPerson = {
     id,
