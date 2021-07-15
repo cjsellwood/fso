@@ -13,6 +13,7 @@ const Country = ({ country }) => {
         console.log(response.data);
         setWeather(response.data);
       });
+      //eslint-disable-next-line
   }, []);
 
   if (weather.main) {
