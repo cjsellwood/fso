@@ -67,7 +67,7 @@ app.delete("/api/persons/:id", (req, res) => {
   res.json({ message: `${person.name} deleted` });
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", async (req, res) => {
   const { name, number } = req.body;
 
   // If name or number not defined
@@ -78,17 +78,19 @@ app.post("/api/persons", (req, res) => {
   }
 
   // If name already exists
-  if (persons.find((person) => person.name === name)) {
+  const existing = await Person.find({ name: name })
+  console.log(existing);
+
+  if (existing.length) {
     return res.status(400).json({ error: "Person already in phonebook" });
   }
 
-  const id = Math.floor(Math.random() * 10 ** 9);
-  const newPerson = {
-    id,
+  const newPerson = new Person({
     name,
     number,
-  };
-  persons = [...persons, newPerson];
+  });
+
+  newPerson.save();
   res.json(newPerson);
 });
 
