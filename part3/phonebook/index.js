@@ -40,18 +40,18 @@ let persons = [
 
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((result) => {
-    res.json(result);
+    return res.json(result);
   });
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const id = Number(req.params.id);
   const person = persons.find((person) => person.id === id);
 
   if (!person) {
-    return res.status(404).json({ error: "person not found" });
+    return next(new Error("person not found"));
   }
-  res.json(person);
+  return res.json(person);
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -79,7 +79,7 @@ app.post("/api/persons", async (req, res) => {
   console.log(existing);
 
   if (existing.length) {
-    return res.status(400).json({ error: "Person already in phonebook" });
+    return next(new Error("Person already in phonebook"));
   }
 
   const newPerson = new Person({
@@ -98,6 +98,14 @@ app.get("/info", (req, res) => {
     <p>${new Date()}</p>
     </div>`
   );
+});
+
+app.use("*", (req, res, next) => {
+  return next(new Error("Page not found"));
+});
+
+app.use((error, req, res, next) => {
+  return res.status(400).json({ error: error.message });
 });
 
 const PORT = process.env.PORT || 3001;
