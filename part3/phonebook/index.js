@@ -1,13 +1,17 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const cors = require("cors");
 
 app.use(express.json());
+app.use(cors());
 
 morgan.token("body", function getBody(req, res) {
   return JSON.stringify(req.body);
 });
-app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"));
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 
 let persons = [
   {
@@ -93,6 +97,7 @@ app.get("/info", (req, res) => {
   );
 });
 
+const PORT = process.env.PORT || 3001;
 app.listen(3001, () => {
-  console.log("server on port 3001");
+  console.log("server on port " + PORT);
 });
