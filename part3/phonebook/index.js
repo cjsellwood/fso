@@ -64,6 +64,15 @@ app.delete("/api/persons/:id", (req, res, next) => {
     });
 });
 
+// Update number of person already in phonebook
+app.put("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndUpdate(
+    req.params.id,
+    { number: req.body.number },
+    { new: true }
+  ).then((result) => res.json(result));
+});
+
 app.post("/api/persons", async (req, res) => {
   const { name, number } = req.body;
 
