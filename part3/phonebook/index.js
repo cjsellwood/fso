@@ -54,17 +54,14 @@ app.get("/api/persons/:id", (req, res) => {
   res.json(person);
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  const person = persons.find((person) => person.id === id);
-
-  if (!person) {
-    return res.status(404).json({ error: "person not found" });
-  }
-
-  persons = persons.filter((person) => person.id !== id);
-  res.json({ message: `${person.name} deleted` });
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 app.post("/api/persons", async (req, res) => {
@@ -78,7 +75,7 @@ app.post("/api/persons", async (req, res) => {
   }
 
   // If name already exists
-  const existing = await Person.find({ name: name })
+  const existing = await Person.find({ name: name });
   console.log(existing);
 
   if (existing.length) {

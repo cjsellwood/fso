@@ -68,10 +68,10 @@ api.put("/api/notes/:id", (req, res, next) => {
   const note = {
     content: body.content,
     important: body.important,
-  }
+  };
 
-  Note.findByIdAndUpdate(req.params.id, note {
-    new: true
+  Note.findByIdAndUpdate(req.params.id, note, {
+    new: true,
   });
 });
 
