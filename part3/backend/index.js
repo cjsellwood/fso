@@ -1,10 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const Note = require("./models/note");
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static("build"))
+app.use(express.static("build"));
 
 let notes = [
   {
@@ -42,17 +44,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-  res.json(notes);
+  Note.find({}).then((notes) => {
+    res.json(notes);
+  });
 });
 
 app.get("/api/notes/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const note = notes.find((note) => note.id === id);
-  if (note) {
+  Note.findById(request.params.id).then((note) => {
     res.json(note);
-  } else {
-    res.status(404).end();
-  }
+  });
 });
 
 app.delete("/api/notes/:id", (req, res) => {
@@ -76,16 +76,15 @@ app.post("/api/notes", (req, res) => {
     });
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
     data: new Date(),
-    id: generateId(),
-  };
+  });
 
-  notes = notes.concat(note);
-
-  res.json(note);
+  note.save().then((savedNote) => {
+    res.json(savedNote);
+  });
 });
 
 const unknownEndpoint = (req, res) => {
@@ -94,7 +93,7 @@ const unknownEndpoint = (req, res) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

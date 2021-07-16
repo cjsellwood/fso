@@ -17,6 +17,7 @@ const App = () => {
 
   useEffect(() => {
     personsService.getAll().then((returnedPersons) => {
+      console.log(returnedPersons);
       setPersons(returnedPersons);
     });
   }, []);
