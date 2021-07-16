@@ -72,7 +72,7 @@ app.put("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndUpdate(
     req.params.id,
     { number: req.body.number },
-    { new: true }
+    { new: true, runValidators: true }
   ).then((result) => res.json(result));
 });
 
@@ -102,7 +102,7 @@ app.post("/api/persons", async (req, res, next) => {
   newPerson
     .save()
     .then((result) => res.json(result))
-    .catch((error) => next(new Error("Name already in phonebook")));
+    .catch((error) => next(new Error(error)));
 });
 
 app.get("/info", (req, res) => {

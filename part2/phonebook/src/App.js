@@ -37,6 +37,7 @@ const App = () => {
     e.preventDefault();
 
     const existingPerson = persons.find((person) => person.name === newName);
+    // If person already in phonebook update their number
     if (existingPerson) {
       if (
         window.confirm(
@@ -71,6 +72,7 @@ const App = () => {
       return;
     }
 
+    // If a new person
     personsService
       .create({
         name: newName,
@@ -84,6 +86,12 @@ const App = () => {
 
         setTimeout(() => {
           setSuccess(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setError(error.response.data.error);
+        setTimeout(() => {
+          setError(null);
         }, 5000);
       });
   };
