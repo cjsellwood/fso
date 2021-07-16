@@ -63,7 +63,7 @@ app.get("/api/notes/:id", (req, res, next) => {
     });
 });
 
-api.put("/api/notes/:id", (req, res, next) => {
+app.put("/api/notes/:id", (req, res, next) => {
   const body = req.body;
   const note = {
     content: body.content,
@@ -83,7 +83,7 @@ app.delete("/api/notes/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/notes", (req, res) => {
+app.post("/api/notes", (req, res, next) => {
   const body = req.body;
 
   if (!body.content) {
@@ -95,12 +95,16 @@ app.post("/api/notes", (req, res) => {
   const note = new Note({
     content: body.content,
     important: body.important || false,
-    data: new Date(),
+    date: new Date(),
   });
 
-  note.save().then((savedNote) => {
-    res.json(savedNote);
-  });
+  note
+    .save()
+    .then((savedNote) => savedNote.toJSON())
+    .then((savedAndFormattedNote) => {
+      res.json(savedAndFormattedNote);
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (req, res) => {
@@ -113,7 +117,9 @@ const errorHandler = (error, req, res, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+    return res.status(400).send({ error: "malformed id" });
+  } else if (error.name === "Validation Error") {
+    return res.status(400).json({ error: error.message });
   }
 
   next(error);
