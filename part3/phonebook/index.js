@@ -45,13 +45,16 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res, next) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (!person) {
-    return next(new Error("person not found"));
-  }
-  return res.json(person);
+  Person.findById(req.params.id)
+    .then((result) => {
+      console.log(result);
+      if (result) {
+        return res.json(result);
+      } else {
+        return next(new Error("person not found"));
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -101,12 +104,14 @@ app.post("/api/persons", async (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(
-    `<div>
-    <p>Phonebook had info for ${persons.length} people</p>
-    <p>${new Date()}</p>
-    </div>`
-  );
+  Person.find().then((result) => {
+    return res.send(
+      `<div>
+      <p>Phonebook had info for ${result.length} people</p>
+      <p>${new Date()}</p>
+      </div>`
+    );
+  });
 });
 
 app.use("*", (req, res, next) => {
