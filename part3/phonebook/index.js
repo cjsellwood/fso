@@ -76,7 +76,7 @@ app.put("/api/persons/:id", (req, res, next) => {
   ).then((result) => res.json(result));
 });
 
-app.post("/api/persons", async (req, res) => {
+app.post("/api/persons", async (req, res, next) => {
   const { name, number } = req.body;
 
   // If name or number not defined
@@ -87,20 +87,22 @@ app.post("/api/persons", async (req, res) => {
   }
 
   // If name already exists
-  const existing = await Person.find({ name: name });
-  console.log(existing);
+  // const existing = await Person.find({ name: name });
+  // console.log(existing);
 
-  if (existing.length) {
-    return next(new Error("Person already in phonebook"));
-  }
+  // if (existing.length) {
+  //   return next(new Error("Person already in phonebook"));
+  // }
 
   const newPerson = new Person({
     name,
     number,
   });
 
-  newPerson.save();
-  res.json(newPerson);
+  newPerson
+    .save()
+    .then((result) => res.json(result))
+    .catch((error) => next(new Error("Name already in phonebook")));
 });
 
 app.get("/info", (req, res) => {
