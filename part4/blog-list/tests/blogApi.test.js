@@ -88,6 +88,24 @@ describe("Adding new note path", () => {
   });
 });
 
+describe("deleting a specific blog path", () => {
+  it("should return status 204", async () => {
+    const before = await api.get("/api/blogs");
+
+    await api.delete(`/api/blogs/${before.body[0].id}`).expect(204);
+  });
+
+  it("should delete blog from database", async () => {
+    const before = await api.get("/api/blogs");
+
+    await api.delete(`/api/blogs/${before.body[0].id}`)
+
+    const after = await api.get("/api/blogs");
+
+    expect(after.body.length).toBe(1);
+  })
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
