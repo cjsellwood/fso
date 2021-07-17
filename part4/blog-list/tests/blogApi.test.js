@@ -35,6 +35,37 @@ describe("Get notes path", () => {
   });
 });
 
+describe("Adding new note path", () => {
+  it("should have a length of 3 after adding new blog", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+      likes: 73,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(201);
+
+    const res = await api.get("/api/blogs");
+    expect(res.body.length).toBe(3);
+  });
+
+  it("should contain a blog with title Blog 3", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+      likes: 73,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(201);
+
+    const res = await api.get("/api/blogs");
+    const blogTitles = res.body.map((blog) => blog.title);
+    expect(blogTitles).toContain("Blog 3")
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
