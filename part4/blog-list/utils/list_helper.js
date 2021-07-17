@@ -40,9 +40,28 @@ const mostBlogs = (blogs) => {
   })[0];
 };
 
+const mostLikes = (blogs) => {
+  let authors = [];
+  for (let blog of blogs) {
+    const index = authors.findIndex((author) => author.author === blog.author);
+    // If not already in array add new author
+    if (index === -1) {
+      authors.push({ author: blog.author, likes: blog.likes });
+      // If already in array add likes to author
+    } else {
+      authors[index].likes += blog.likes;
+    }
+  }
+  // Sort from most blogs to least
+  return authors.sort((a, b) => {
+    return b.likes - a.likes;
+  })[0];
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
