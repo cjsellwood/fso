@@ -1,25 +1,9 @@
 require("dotenv").config();
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const mongoose = require("mongoose");
+const http = require("http");
+const app = require("./app");
 
-const blogRouter = require("./controllers/blog");
+const server = http.createServer(app);
 
-const mongoUrl = process.env.MONGODB_URI;
-mongoose.connect(mongoUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-});
-
-app.use(cors());
-app.use(express.json());
-
-app.use("/api/blogs", blogRouter);
-
-const PORT = process.env.PORT || 3003;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 });

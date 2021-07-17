@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index",
-    "test": "jest --watch"
+    "test": "NODE_ENV=test jest --watch --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +16,11 @@
     "express": "^4.17.1",
     "jest": "^27.0.6",
     "mongoose": "^5.13.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "supertest": "^6.1.3"
   }
 }
