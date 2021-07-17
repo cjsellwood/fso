@@ -62,7 +62,29 @@ describe("Adding new note path", () => {
 
     const res = await api.get("/api/blogs");
     const blogTitles = res.body.map((blog) => blog.title);
-    expect(blogTitles).toContain("Blog 3")
+    expect(blogTitles).toContain("Blog 3");
+  });
+
+  it("should set likes to 0 if missing from request", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(201);
+
+    const res = await api.get("/api/blogs");
+    expect(res.body[2].likes).toBe(0);
+  });
+
+  it("should respond with status code 400 if title and url are missing", async () => {
+    const newBlog = {
+      author: "Writer 3",
+      likes: 73,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
   });
 });
 

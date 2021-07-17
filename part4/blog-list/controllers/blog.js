@@ -7,12 +7,15 @@ router.get("/", async (req, res) => {
   res.json(blogs);
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const blog = new Blog(req.body);
 
-  blog.save().then((result) => {
-    res.status(201).json(result);
-  });
+  if (!blog.title && !blog.url) {
+    return res.status(400).end();
+  }
+
+  const result = await blog.save();
+  res.status(201).json(result);
 });
 
 module.exports = router;
