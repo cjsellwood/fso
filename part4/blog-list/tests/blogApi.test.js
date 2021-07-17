@@ -98,12 +98,48 @@ describe("deleting a specific blog path", () => {
   it("should delete blog from database", async () => {
     const before = await api.get("/api/blogs");
 
-    await api.delete(`/api/blogs/${before.body[0].id}`)
+    await api.delete(`/api/blogs/${before.body[0].id}`);
 
     const after = await api.get("/api/blogs");
 
     expect(after.body.length).toBe(1);
-  })
+  });
+});
+
+describe("updating a blog path", () => {
+  it("should return JSON format", async () => {
+    const before = await api.get("/api/blogs");
+
+    const updatedBlog = {
+      title: "Blog 1",
+      author: "Writer 1",
+      url: "www.blog1.com",
+      likes: 99,
+    };
+
+    await api
+      .put(`/api/blogs/${before.body[0].id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+  });
+
+  it("should change the likes of the blog", async () => {
+    const before = await api.get("/api/blogs");
+
+    const updatedBlog = {
+      title: "Blog 1",
+      author: "Writer 1",
+      url: "www.blog1.com",
+      likes: 99,
+    };
+
+    const result = await api
+      .put(`/api/blogs/${before.body[0].id}`)
+      .send(updatedBlog);
+
+    expect(result.body.likes).toBe(99);
+  });
 });
 
 afterAll(() => {
