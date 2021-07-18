@@ -3,11 +3,16 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Note = require("../models/note");
+const User = require("../models/user");
 const helper = require("./test_helper");
 
 beforeEach(async () => {
   await Note.deleteMany({});
   await Note.insertMany(helper.initialNotes);
+
+  await User.deleteMany({});
+  const initialUsers = await helper.initialUsers;
+  await User.insertMany(initialUsers);
 });
 
 describe("when there is initially some notes saved", () => {
@@ -49,7 +54,7 @@ describe("viewing a specific note", () => {
     expect(resultNote.body).toEqual(processedNoteToView);
   });
 
-  test("fails with statuscode 404 if note does not exist", async () => {
+  test("fails with status code 404 if note does not exist", async () => {
     const validNonexistingId = await helper.nonExistingId();
 
     await api.get(`/api/notes/${validNonexistingId}`).expect(404);
@@ -69,9 +74,14 @@ describe("addition of a new note", () => {
       important: true,
     };
 
+    const loginInfo = { username: "test", password: "test" };
+
+    const login = await api.post("/api/login").send(loginInfo);
+
     await api
       .post("/api/notes")
       .send(newNote)
+      .set("authorization", "bearer " + login.body.token)
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
@@ -82,12 +92,19 @@ describe("addition of a new note", () => {
     expect(contents).toContain("async/await simplifies making async calls");
   });
 
-  test("fails with status code 400 if data invaild", async () => {
+  test("fails with status code 400 if data invalid", async () => {
     const newNote = {
       important: true,
     };
 
-    await api.post("/api/notes").send(newNote).expect(400);
+    const loginInfo = { username: "test", password: "test" };
+
+    const login = await api.post("/api/login").send(loginInfo);
+    await api
+      .post("/api/notes")
+      .send(newNote)
+      .set("authorization", "bearer " + login.body.token)
+      .expect(400);
 
     const notesAtEnd = await helper.notesInDb();
 
