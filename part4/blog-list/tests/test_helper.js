@@ -13,6 +13,15 @@ const initialBlogs = [
   },
 ];
 
+const initialUsers = [
+  {
+    name: "test 1",
+    username: "test 1",
+    password: "$2y$12$8sge9UyXfOgw24d13l0AUOd7knlxxSKmU0g7t/Uf6S38EpnKUnVKe",
+  },
+];
+
 module.exports = {
   initialBlogs,
+  initialUsers,
 };
