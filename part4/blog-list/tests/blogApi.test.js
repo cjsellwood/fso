@@ -229,18 +229,51 @@ describe("Adding new blog path", () => {
 describe("deleting a specific blog path", () => {
   it("should return status 204", async () => {
     const before = await api.get("/api/blogs");
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
 
-    await api.delete(`/api/blogs/${before.body[0].id}`).expect(204);
+    const token = userInfo.body.token;
+    await api
+      .delete(`/api/blogs/${before.body[0].id}`)
+      .set("authorization", `bearer ${token}`)
+      .expect(204);
   });
 
   it("should delete blog from database", async () => {
     const before = await api.get("/api/blogs");
 
-    await api.delete(`/api/blogs/${before.body[0].id}`);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    await api
+      .delete(`/api/blogs/${before.body[0].id}`)
+      .set("authorization", `bearer ${token}`);
 
     const after = await api.get("/api/blogs");
 
     expect(after.body.length).toBe(1);
+  });
+
+  it("should not delete if token not sent", async () => {
+    const before = await api.get("/api/blogs");
+    await api.delete(`/api/blogs/${before.body[0].id}`).expect(401);
+  });
+
+  it("should only delete if user was the author of blog", async () => {
+    const newUser = { username: "test 2", name: "test 2", password: "test 2" };
+    await api.post(`/api/users`).send(newUser);
+    const login = await api
+      .post("/api/login")
+      .send({ username: newUser.username, password: newUser.password });
+
+    const before = await api.get("/api/blogs");
+    await api
+      .delete(`/api/blogs/${before.body[0].id}`)
+      .set("authorization", `bearer ${login.body.token}`)
+      .expect(401);
   });
 });
 

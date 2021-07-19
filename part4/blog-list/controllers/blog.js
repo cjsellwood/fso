@@ -37,7 +37,24 @@ router.post("/", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
+
+  const token = req.token;
+  if (!token) {
+    return res.status(401).json({ error: "token missing or invalid" });
+  }
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: "token missing or invalid" });
+  }
+
+  const blog = await Blog.findById(id);
+
+  if (blog.user.toString() !== decodedToken.id.toString()) {
+    return res.status(401).json({ error: "you are not the creator of blog" });
+  }
+
   await Blog.findByIdAndRemove(id);
+
   res.status(204).end();
 });
 
