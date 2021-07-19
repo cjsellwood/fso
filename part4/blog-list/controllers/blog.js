@@ -3,6 +3,7 @@ const router = express.Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const { tokenExtractor, userExtractor } = require("../utils/middleware");
 
 router.get("/", async (req, res) => {
   const blogs = await Blog.find({}).populate("user");
@@ -10,46 +11,47 @@ router.get("/", async (req, res) => {
 });
 
 // Create new blog listing
-router.post("/", async (req, res) => {
+router.post("/", tokenExtractor, userExtractor, async (req, res) => {
   const token = req.token;
+  const userId = req.userId;
 
   if (!token) {
     return res.status(401).json({ error: "token missing or invalid" });
   }
-  const decodedToken = jwt.verify(token, process.env.SECRET);
 
-  if (!decodedToken.id) {
+  if (!userId) {
     return res.status(401).json({ error: "token missing or invalid" });
   }
 
-  const author = await User.find({});
-  const blog = new Blog({ ...req.body, user: author[0]._id });
+  const author = await User.findById(userId);
+  const blog = new Blog({ ...req.body, user: author._id });
   if (!blog.title && !blog.url) {
     return res.status(400).end();
   }
 
-  author[0].blogs = [...author[0].blogs, blog._id];
-  await author[0].save();
+  author.blogs = [...author.blogs, blog._id];
+  await author.save();
 
   const result = await blog.save();
   res.status(201).json(result);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", tokenExtractor, userExtractor, async (req, res) => {
   const { id } = req.params;
+  const userId = req.userId;
 
   const token = req.token;
   if (!token) {
     return res.status(401).json({ error: "token missing or invalid" });
   }
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!decodedToken.id) {
+
+  if (!userId) {
     return res.status(401).json({ error: "token missing or invalid" });
   }
 
   const blog = await Blog.findById(id);
 
-  if (blog.user.toString() !== decodedToken.id.toString()) {
+  if (blog.user.toString() !== userId.toString()) {
     return res.status(401).json({ error: "you are not the creator of blog" });
   }
 
