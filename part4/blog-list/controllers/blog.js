@@ -9,17 +9,9 @@ router.get("/", async (req, res) => {
   res.json(blogs);
 });
 
-const getTokenFrom = (req) => {
-  const authorization = req.get("authorization");
-  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-    return authorization.substring(7);
-  }
-  return null;
-};
-
 // Create new blog listing
 router.post("/", async (req, res) => {
-  const token = getTokenFrom(req);
+  const token = req.token;
 
   if (!token) {
     return res.status(401).json({ error: "token missing or invalid" });
