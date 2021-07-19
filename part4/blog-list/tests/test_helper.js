@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 const initialBlogs = [
   {
     title: "Blog 1",
@@ -13,11 +15,11 @@ const initialBlogs = [
   },
 ];
 
-const initialUsers = [
+const initialUsers = async () => [
   {
     name: "test 1",
     username: "test 1",
-    password: "$2y$12$8sge9UyXfOgw24d13l0AUOd7knlxxSKmU0g7t/Uf6S38EpnKUnVKe",
+    password: await bcrypt.hash("test 1", 10),
   },
 ];
 

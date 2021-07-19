@@ -12,7 +12,8 @@ beforeEach(async () => {
   await User.deleteMany({});
 
   let firstUser;
-  for (let user of helper.initialUsers) {
+  const initialUsers = await helper.initialUsers();
+  for (let user of initialUsers) {
     let userObject = new User(user);
     firstUser = userObject;
     await userObject.save();
