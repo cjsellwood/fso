@@ -27,7 +27,7 @@ router.post(
 );
 
 router.get("/", async (req, res, next) => {
-  const users = await User.find({});
+  const users = await User.find({}).populate("blogs");
   res.json(users);
 });
 

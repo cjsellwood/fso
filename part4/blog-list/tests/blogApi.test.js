@@ -2,20 +2,33 @@ const app = require("../app");
 const supertest = require("supertest");
 const mongoose = require("mongoose");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const helper = require("./test_helper");
 
 const api = supertest(app);
 
 beforeEach(async () => {
   await Blog.deleteMany({});
+  await User.deleteMany({});
 
+  let firstUser;
+  for (let user of helper.initialUsers) {
+    let userObject = new User(user);
+    firstUser = userObject;
+    await userObject.save();
+  }
+
+  let blogIds = [];
   for (let blog of helper.initialBlogs) {
-    let blogObject = new Blog(blog);
+    let blogObject = new Blog({ ...blog, user: firstUser._id });
+    blogIds.push(blogObject._id);
     await blogObject.save();
   }
+
+  await User.findByIdAndUpdate(firstUser._id, { blogs: blogIds });
 });
 
-describe("Get notes path", () => {
+describe("Get blogs path", () => {
   it("should return notes in JSON format", async () => {
     await api
       .get("/api/blogs")
@@ -23,7 +36,7 @@ describe("Get notes path", () => {
       .expect("Content-Type", /application\/json/);
   });
 
-  it("should return 2 notes", async () => {
+  it("should return 2 blogs", async () => {
     const res = await api.get("/api/blogs");
     expect(res.body.length).toBe(helper.initialBlogs.length);
   });
@@ -32,6 +45,12 @@ describe("Get notes path", () => {
     const res = await api.get("/api/blogs");
     expect(res.body[0].id).not.toBeUndefined();
     expect(res.body[0]._id).toBeUndefined();
+  });
+
+  it("should display the user who added the blog", async () => {
+    const res = await api.get("/api/blogs");
+    expect(res.body[0].user).not.toBeUndefined();
+    expect(res.body[0].user.username).toBe("test 1");
   });
 });
 
@@ -85,6 +104,34 @@ describe("Adding new note path", () => {
     };
 
     await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+
+  it("should add a user as the creator", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+      likes: 73,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(201);
+
+    const res = await api.get("/api/blogs");
+    expect(res.body[res.body.length - 1].user).not.toBeUndefined();
+  });
+
+  it("should add the blog to the users blogs", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+      likes: 73,
+    };
+
+    const res = await api.post("/api/blogs").send(newBlog);
+
+    const user = await User.findById(res.body.user);
+    expect(user.blogs.length).toBe(helper.initialBlogs.length + 1);
   });
 });
 

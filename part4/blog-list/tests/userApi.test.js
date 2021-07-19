@@ -11,15 +11,21 @@ beforeEach(async () => {
   await Blog.deleteMany({});
   await User.deleteMany({});
 
+  let firstUser;
+  for (let user of helper.initialUsers) {
+    let userObject = new User(user);
+    firstUser = userObject;
+    await userObject.save();
+  }
+
+  let blogIds = [];
   for (let blog of helper.initialBlogs) {
-    let blogObject = new Blog(blog);
+    let blogObject = new Blog({ ...blog, user: firstUser._id });
+    blogIds.push(blogObject._id);
     await blogObject.save();
   }
 
-  for (let user of helper.initialUsers) {
-    let userObject = new User(user);
-    await userObject.save();
-  }
+  await User.findByIdAndUpdate(firstUser._id, { blogs: blogIds });
 });
 
 describe("users api", () => {
@@ -121,6 +127,13 @@ describe("users api", () => {
       expect(result.body[0].username).toBe("test 1");
       expect(result.body[0].id).not.toBeUndefined();
       expect(result.body[0].password).toBeUndefined();
+    });
+
+    test("should display the blogs the user has added", async () => {
+      const result = await api.get("/api/users");
+
+      expect(result.body[0].blogs.length).toBe(2);
+      expect(result.body[0].blogs[0].title).toBe("Blog 1");
     });
   });
 });
