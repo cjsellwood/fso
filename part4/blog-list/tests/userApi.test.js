@@ -40,6 +40,74 @@ describe("users api", () => {
       const usernames = users.map((user) => user.username);
       expect(usernames).toContain("test 2");
     });
+
+    test("it should not add user if username or password are not given", async () => {
+      const newUser = {
+        name: "test2",
+      };
+      const result = await api
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .expect("Content-Type", /application\/json/);
+
+      expect(result.body.error).toBe("Username or password not valid");
+      const users = await User.find({});
+      expect(users.length).toBe(1);
+    });
+
+    test("it should not add user if password is less than 3 characters", async () => {
+      const newUser = {
+        username: "test 2",
+        name: "test 2",
+        password: "te",
+      };
+      const result = await api
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .expect("Content-Type", /application\/json/);
+
+      expect(result.body.error).toBe("Username or password not valid");
+      const users = await User.find({});
+      expect(users.length).toBe(1);
+    });
+
+    test("it should not add user if username is less than 3 characters", async () => {
+      const newUser = {
+        username: "te",
+        name: "test 2",
+        password: "test 2",
+      };
+      const result = await api
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .expect("Content-Type", /application\/json/);
+
+      expect(result.body.error).toContain(
+        "shorter than the minimum allowed length"
+      );
+      const users = await User.find({});
+      expect(users.length).toBe(1);
+    });
+
+    test("it should not add user if username is not unique", async () => {
+      const newUser = {
+        username: "test 1",
+        name: "test 1",
+        password: "test 1",
+      };
+      const result = await api
+        .post("/api/users")
+        .send(newUser)
+        .expect(400)
+        .expect("Content-Type", /application\/json/);
+
+      expect(result.body.error).toContain("expected `username` to be unique");
+      const users = await User.find({});
+      expect(users.length).toBe(1);
+    });
   });
 
   describe("fetching all users", () => {
