@@ -55,7 +55,7 @@ describe("Get blogs path", () => {
   });
 });
 
-describe("Adding new note path", () => {
+describe("Adding new blog path", () => {
   it("should have a length of 3 after adding new blog", async () => {
     const newBlog = {
       title: "Blog 3",
@@ -64,7 +64,16 @@ describe("Adding new note path", () => {
       likes: 73,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(201);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("authorization", `bearer ${token}`)
+      .expect(201);
 
     const res = await api.get("/api/blogs");
     expect(res.body.length).toBe(3);
@@ -78,7 +87,16 @@ describe("Adding new note path", () => {
       likes: 73,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(201);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("authorization", `bearer ${token}`)
+      .expect(201);
 
     const res = await api.get("/api/blogs");
     const blogTitles = res.body.map((blog) => blog.title);
@@ -92,7 +110,16 @@ describe("Adding new note path", () => {
       url: "www.blog3.com",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(201);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("authorization", `bearer ${token}`)
+      .expect(201);
 
     const res = await api.get("/api/blogs");
     expect(res.body[2].likes).toBe(0);
@@ -104,7 +131,16 @@ describe("Adding new note path", () => {
       likes: 73,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("authorization", `bearer ${token}`)
+      .expect(400);
   });
 
   it("should add a user as the creator", async () => {
@@ -115,7 +151,16 @@ describe("Adding new note path", () => {
       likes: 73,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(201);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("authorization", `bearer ${token}`)
+      .expect(201);
 
     const res = await api.get("/api/blogs");
     expect(res.body[res.body.length - 1].user).not.toBeUndefined();
@@ -129,10 +174,55 @@ describe("Adding new note path", () => {
       likes: 73,
     };
 
-    const res = await api.post("/api/blogs").send(newBlog);
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+    const res = await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .set("authorization", `bearer ${token}`);
 
     const user = await User.findById(res.body.user);
     expect(user.blogs.length).toBe(helper.initialBlogs.length + 1);
+  });
+
+  it("should only be added if the user sent a valid token", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+      likes: 73,
+    };
+
+    const userInfo = await api
+      .post("/api/login")
+      .send({ username: "test 1", password: "test 1" });
+
+    const token = userInfo.body.token;
+
+    const res = await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .set("authorization", `bearer ${token}`);
+
+    const user = await User.findById(res.body.user);
+    expect(user.blogs.length).toBe(helper.initialBlogs.length + 1);
+  });
+
+  it("should not be added if user does not send a valid token", async () => {
+    const newBlog = {
+      title: "Blog 3",
+      author: "Writer 3",
+      url: "www.blog3.com",
+      likes: 73,
+    };
+
+    const res = await api.post("/api/blogs").send(newBlog).expect(401);
+
+    expect(res.body.error).toBe("token missing or invalid");
   });
 });
 
