@@ -11,7 +11,6 @@ const BlogDisplay = ({
 }) => {
   return (
     <div>
-      <h2>blogs</h2>
       <p>{name} logged in</p>
       <button onClick={logoutUser}>Logout</button>
       <NewBlogForm

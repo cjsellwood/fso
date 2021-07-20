@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const errorHandler = (error, req, res, next) => {
+  console.log(error)
   if (error.name === "ValidationError") {
     return res.status(400).json({ error: error.message });
   }

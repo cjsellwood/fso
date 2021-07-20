@@ -3,6 +3,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import BlogDisplay from "./components/BlogDisplay";
 import LoginForm from "./components/LoginForm";
+import Message from "./components/Message";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,6 +15,8 @@ const App = () => {
     author: "",
     url: "",
   });
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -30,20 +33,35 @@ const App = () => {
   const loginUser = async (e) => {
     e.preventDefault();
 
-    const user = await loginService.login(username, password);
+    try {
+      const user = await loginService.login(username, password);
 
-    localStorage.setItem("blog-list-user", JSON.stringify(user));
+      localStorage.setItem("blog-list-user", JSON.stringify(user));
 
-    blogService.setToken(user.token);
+      blogService.setToken(user.token);
 
-    setUser(user);
-    setUsername("");
-    setPassword("");
+      setUser(user);
+      setUsername("");
+      setPassword("");
+      setSuccess(`Logged In`);
+      setTimeout(() => {
+        setSuccess(null);
+      }, 4000);
+    } catch (error) {
+      setError(`Wrong username or password`);
+      setTimeout(() => {
+        setError(null);
+      }, 4000);
+    }
   };
 
   const logoutUser = () => {
     localStorage.removeItem("blog-list-user");
     setUser(null);
+    setSuccess(`Logged Out`);
+    setTimeout(() => {
+      setSuccess(null);
+    }, 4000);
   };
 
   const newBlogInput = (e) => {
@@ -56,18 +74,32 @@ const App = () => {
   const submitBlog = async (e) => {
     e.preventDefault();
 
-    const result = await blogService.create(newBlog);
-    setBlogs([...blogs, result]);
+    try {
+      const result = await blogService.create(newBlog);
+      setBlogs([...blogs, result]);
 
-    setNewBlog({
-      title: "",
-      author: "",
-      url: "",
-    });
+      setNewBlog({
+        title: "",
+        author: "",
+        url: "",
+      });
+
+      setSuccess(`Blog added: ${result.title}`);
+      setTimeout(() => {
+        setSuccess(null);
+      }, 4000);
+    } catch (error) {
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 4000);
+    }
   };
 
   return (
     <div>
+      <h1>Blogs</h1>
+      <Message error={error} success={success} />
       {user === null ? (
         <LoginForm
           loginUser={loginUser}
