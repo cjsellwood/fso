@@ -4,6 +4,8 @@ import loginService from "./services/login";
 import BlogDisplay from "./components/BlogDisplay";
 import LoginForm from "./components/LoginForm";
 import Message from "./components/Message";
+import Togglable from "./components/Togglable";
+import NewBlogForm from "./components/NewBlogForm";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -109,14 +111,18 @@ const App = () => {
           setPassword={setPassword}
         />
       ) : (
-        <BlogDisplay
-          name={user.name}
-          blogs={blogs}
-          logoutUser={logoutUser}
-          newBlog={newBlog}
-          newBlogInput={newBlogInput}
-          submitBlog={submitBlog}
-        />
+        <React.Fragment>
+          <p>{user.name} logged in</p>
+          <button onClick={logoutUser}>Logout</button>
+          <Togglable buttonLabel="create new blog">
+            <NewBlogForm
+              newBlog={newBlog}
+              submitBlog={submitBlog}
+              newBlogInput={newBlogInput}
+            />
+          </Togglable>
+          <BlogDisplay blogs={blogs} />
+        </React.Fragment>
       )}
     </div>
   );
