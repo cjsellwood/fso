@@ -9,6 +9,11 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    author: "",
+    url: "",
+  });
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -18,6 +23,7 @@ const App = () => {
     const storedUser = localStorage.getItem("blog-list-user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      blogService.setToken(JSON.parse(storedUser).token);
     }
   }, []);
 
@@ -28,6 +34,8 @@ const App = () => {
 
     localStorage.setItem("blog-list-user", JSON.stringify(user));
 
+    blogService.setToken(user.token);
+
     setUser(user);
     setUsername("");
     setPassword("");
@@ -36,6 +44,26 @@ const App = () => {
   const logoutUser = () => {
     localStorage.removeItem("blog-list-user");
     setUser(null);
+  };
+
+  const newBlogInput = (e) => {
+    setNewBlog({
+      ...newBlog,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const submitBlog = async (e) => {
+    e.preventDefault();
+
+    const result = await blogService.create(newBlog);
+    setBlogs([...blogs, result]);
+
+    setNewBlog({
+      title: "",
+      author: "",
+      url: "",
+    });
   };
 
   return (
@@ -49,7 +77,14 @@ const App = () => {
           setPassword={setPassword}
         />
       ) : (
-        <BlogDisplay name={user.name} blogs={blogs} logoutUser={logoutUser} />
+        <BlogDisplay
+          name={user.name}
+          blogs={blogs}
+          logoutUser={logoutUser}
+          newBlog={newBlog}
+          newBlogInput={newBlogInput}
+          submitBlog={submitBlog}
+        />
       )}
     </div>
   );
