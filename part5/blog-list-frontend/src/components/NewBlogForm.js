@@ -1,6 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 
-const NewBlogForm = ({ newBlog, newBlogInput, submitBlog }) => {
+const NewBlogForm = ({ createBlog }) => {
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    author: "",
+    url: "",
+  });
+
+  const newBlogInput = (e) => {
+    setNewBlog({
+      ...newBlog,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const submitBlog = (e) => {
+    e.preventDefault();
+
+    createBlog(newBlog);
+
+    setNewBlog({
+      title: "",
+      author: "",
+      url: "",
+    });
+  };
+
   return (
     <form onSubmit={submitBlog}>
       <h2>Create New</h2>

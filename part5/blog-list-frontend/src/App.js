@@ -12,11 +12,6 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [newBlog, setNewBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
-  });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -66,25 +61,10 @@ const App = () => {
     }, 4000);
   };
 
-  const newBlogInput = (e) => {
-    setNewBlog({
-      ...newBlog,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const submitBlog = async (e) => {
-    e.preventDefault();
-
+  const createBlog = async (newBlog) => {
     try {
       const result = await blogService.create(newBlog);
       setBlogs([...blogs, result]);
-
-      setNewBlog({
-        title: "",
-        author: "",
-        url: "",
-      });
 
       setSuccess(`Blog added: ${result.title}`);
       setTimeout(() => {
@@ -115,11 +95,7 @@ const App = () => {
           <p>{user.name} logged in</p>
           <button onClick={logoutUser}>Logout</button>
           <Togglable buttonLabel="create new blog">
-            <NewBlogForm
-              newBlog={newBlog}
-              submitBlog={submitBlog}
-              newBlogInput={newBlogInput}
-            />
+            <NewBlogForm createBlog={createBlog} />
           </Togglable>
           <BlogDisplay blogs={blogs} />
         </React.Fragment>
