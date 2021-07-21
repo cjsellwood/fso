@@ -40,12 +40,12 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
-      setSuccess(`Logged In`);
+      setSuccess("Logged In");
       setTimeout(() => {
         setSuccess(null);
       }, 4000);
     } catch (error) {
-      setError(`Wrong username or password`);
+      setError("Wrong username or password");
       setTimeout(() => {
         setError(null);
       }, 4000);
@@ -55,7 +55,7 @@ const App = () => {
   const logoutUser = () => {
     localStorage.removeItem("blog-list-user");
     setUser(null);
-    setSuccess(`Logged Out`);
+    setSuccess("Logged Out");
     setTimeout(() => {
       setSuccess(null);
     }, 4000);
@@ -125,7 +125,7 @@ const App = () => {
 
   const deleteBlog = async (id) => {
     let blogsCopy = [...blogs];
-    if (!window.confirm(`Are you sure you want to delete blog`)) {
+    if (!window.confirm("Are you sure you want to delete blog")) {
       return;
     }
 
