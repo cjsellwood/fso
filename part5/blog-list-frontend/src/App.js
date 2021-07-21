@@ -100,12 +100,29 @@ const App = () => {
           };
         }
       });
-      setBlogs(likedBlogs)
+      setBlogs(likedBlogs);
 
       setSuccess(`Blog liked: ${result.title}`);
       setTimeout(() => {
         setSuccess(null);
       }, 4000);
+    } catch (error) {
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 4000);
+    }
+  };
+
+  const deleteBlog = async (id) => {
+    let blogsCopy = [...blogs];
+    if (!window.confirm(`Are you sure you want to delete blog`)) {
+      return;
+    }
+
+    try {
+      await blogService.deleteBlog(id);
+      setBlogs(blogsCopy.filter((blog) => blog.id !== id));
     } catch (error) {
       setError(error.response.data.error);
       setTimeout(() => {
@@ -133,7 +150,11 @@ const App = () => {
           <Togglable buttonLabel="create new blog">
             <NewBlogForm createBlog={createBlog} />
           </Togglable>
-          <BlogDisplay blogs={blogs} likeBlog={likeBlog} />
+          <BlogDisplay
+            blogs={blogs}
+            likeBlog={likeBlog}
+            deleteBlog={deleteBlog}
+          />
         </React.Fragment>
       )}
     </div>
