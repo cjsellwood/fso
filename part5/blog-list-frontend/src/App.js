@@ -64,7 +64,16 @@ const App = () => {
   const createBlog = async (newBlog) => {
     try {
       const result = await blogService.create(newBlog);
-      setBlogs([...blogs, result]);
+      setBlogs([
+        ...blogs,
+        {
+          ...result,
+          user: {
+            id: result.user,
+            username: user.username,
+          },
+        },
+      ]);
 
       setSuccess(`Blog added: ${result.title}`);
       setTimeout(() => {
@@ -154,6 +163,7 @@ const App = () => {
             blogs={blogs}
             likeBlog={likeBlog}
             deleteBlog={deleteBlog}
+            user={user}
           />
         </React.Fragment>
       )}

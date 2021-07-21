@@ -1,6 +1,6 @@
 import Blog from "./Blog";
 
-const BlogDisplay = ({ blogs, likeBlog, deleteBlog }) => {
+const BlogDisplay = ({ blogs, likeBlog, deleteBlog, user }) => {
   return (
     <div>
       {blogs
@@ -11,6 +11,7 @@ const BlogDisplay = ({ blogs, likeBlog, deleteBlog }) => {
             blog={blog}
             likeBlog={likeBlog}
             deleteBlog={deleteBlog}
+            user={user}
           />
         ))}
     </div>
