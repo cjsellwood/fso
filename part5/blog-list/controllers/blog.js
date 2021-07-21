@@ -26,7 +26,7 @@ router.post("/", tokenExtractor, userExtractor, async (req, res) => {
   const author = await User.findById(userId);
   const blog = new Blog({ ...req.body, user: author._id });
   if (!blog.title && !blog.url) {
-    return res.status(400).json({error: "Needs to have title and url"});
+    return res.status(400).json({ error: "Needs to have title and url" });
   }
 
   author.blogs = [...author.blogs, blog._id];
@@ -62,6 +62,8 @@ router.delete("/:id", tokenExtractor, userExtractor, async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
+  delete req.body.id;
+  delete req.body.__v;
 
   const updated = await Blog.findByIdAndUpdate(
     id,

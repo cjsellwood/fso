@@ -78,6 +78,42 @@ const App = () => {
     }
   };
 
+  const likeBlog = async (id) => {
+    let blogsCopy = [...blogs];
+    const updatedBlog = { ...blogsCopy.find((blog) => blog.id === id) };
+
+    updatedBlog.likes = updatedBlog.likes + 1;
+    updatedBlog.user = updatedBlog.user.id;
+
+    try {
+      const result = await blogService.update(updatedBlog);
+
+      const likedBlogs = blogsCopy.map((blog) => {
+        if (blog.id === result.id) {
+          return {
+            ...blog,
+            likes: result.likes,
+          };
+        } else {
+          return {
+            ...blog,
+          };
+        }
+      });
+      setBlogs(likedBlogs)
+
+      setSuccess(`Blog liked: ${result.title}`);
+      setTimeout(() => {
+        setSuccess(null);
+      }, 4000);
+    } catch (error) {
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 4000);
+    }
+  };
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -97,7 +133,7 @@ const App = () => {
           <Togglable buttonLabel="create new blog">
             <NewBlogForm createBlog={createBlog} />
           </Togglable>
-          <BlogDisplay blogs={blogs} />
+          <BlogDisplay blogs={blogs} likeBlog={likeBlog} />
         </React.Fragment>
       )}
     </div>
