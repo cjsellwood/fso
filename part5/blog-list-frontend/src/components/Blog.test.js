@@ -72,4 +72,41 @@ describe("<Blog /> Component", () => {
       expect(component.queryByText("likes 0")).not.toBeNull();
     });
   });
+
+  describe("clicking the like button", () => {
+    let component;
+    let likeBlog;
+    beforeEach(() => {
+      const blog = {
+        title: "Blog 1",
+        author: "Blog writer 1",
+        url: "www.blog1.com",
+        likes: 0,
+        id: 0,
+        user: {
+          username: "bob",
+        },
+      };
+      likeBlog = jest.fn();
+      const deleteBlog = jest.fn();
+      component = render(
+        <Blog
+          blog={blog}
+          user={{
+            username: "bob",
+          }}
+          likeBlog={likeBlog}
+          deleteBlog={deleteBlog}
+        />
+      );
+    });
+
+    test("url and number of likes should be shown", () => {
+      userEvent.click(component.getByText("view"));
+      userEvent.click(component.getByText("like"));
+      userEvent.click(component.getByText("like"));
+
+      expect(likeBlog).toHaveBeenCalledTimes(2);
+    });
+  });
 });
