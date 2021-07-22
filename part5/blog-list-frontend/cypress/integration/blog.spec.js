@@ -80,4 +80,6 @@ describe("Blog app", function () {
       cy.contains("likes 1");
     });
   });
+
+  
 });
