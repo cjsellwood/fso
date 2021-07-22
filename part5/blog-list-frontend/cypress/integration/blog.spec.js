@@ -92,10 +92,53 @@ describe("Blog app", function () {
       cy.get(".blog-list").should("not.contain", "test title");
     });
 
-    it.only("user cannot delete blog created by a different user", function () {
+    it("user cannot delete blog created by a different user", function () {
       cy.login({ username: "test2", password: "test2" });
       cy.contains("view").click();
       cy.get("html").should("not.contain", "delete");
+    });
+  });
+
+  describe("When multiple blog created", function () {
+    beforeEach(function () {
+      cy.login({ username: "test", password: "test" });
+      cy.contains("create new blog").click();
+      cy.get("#title").type("test title");
+      cy.get("#author").type("test author");
+      cy.get("#url").type("www.test.com");
+      cy.get("#submit-blog-button").click();
+
+      cy.get("#title").type("test title 2");
+      cy.get("#author").type("test author 2");
+      cy.get("#url").type("www.test2.com");
+      cy.get("#submit-blog-button").click();
+
+      cy.get("#title").type("test title 3");
+      cy.get("#author").type("test author 3");
+      cy.get("#url").type("www.test3.com");
+      cy.get("#submit-blog-button").click();
+    });
+
+    it.only("has 3 blogs", function () {
+      cy.get(".blog-list > div").should("have.length", 3);
+      cy.get(".blog-list > div:first-child").contains("view").click();
+      cy.get(".blog-list > div:nth-child(2)").contains("view").click();
+      cy.get(".blog-list > div:nth-child(3)").contains("view").click();
+
+      cy.get(".blog-list > div:first-child").contains("like").click();
+
+      cy.get(".blog-list > div:nth-child(2)").contains("like").click();
+      cy.get(".blog-list > div:nth-child(2)").contains("like").click();
+
+      cy.get(".blog-list > div:nth-child(3)").contains("like").click();
+      cy.get(".blog-list > div:nth-child(3)").contains("like").click();
+      cy.get(".blog-list > div:nth-child(2)").contains("like").click();
+
+      cy.get(".blog-list > div").first().should("contain", "test title 3");
+      cy.get(".blog-list > div").first().should("contain", "likes 3");
+
+      cy.get(".blog-list > div").last().should("contain", "test title");
+      cy.get(".blog-list > div").last().should("contain", "likes 1");
     });
   });
 });
