@@ -8,6 +8,12 @@ describe("Blog app", function () {
       name: "test",
     });
 
+    cy.request("POST", "http://localhost:3003/api/users", {
+      username: "test2",
+      password: "test2",
+      name: "test2",
+    });
+
     cy.visit("http://localhost:3000");
   });
 
@@ -73,13 +79,23 @@ describe("Blog app", function () {
       cy.get("#submit-blog-button").click();
     });
 
-    it.only("a blog can be liked", function () {
+    it("a blog can be liked", function () {
       cy.contains("view").click();
       cy.contains("likes 0");
       cy.contains("like").click();
       cy.contains("likes 1");
     });
-  });
 
-  
+    it("the user can delete the blog", function () {
+      cy.contains("view").click();
+      cy.contains("delete").click();
+      cy.get(".blog-list").should("not.contain", "test title");
+    });
+
+    it.only("user cannot delete blog created by a different user", function () {
+      cy.login({ username: "test2", password: "test2" });
+      cy.contains("view").click();
+      cy.get("html").should("not.contain", "delete");
+    });
+  });
 });
