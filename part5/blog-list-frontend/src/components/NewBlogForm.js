@@ -59,7 +59,7 @@ const NewBlogForm = ({ createBlog }) => {
           onChange={(e) => newBlogInput(e)}
         />
       </div>
-      <button type="submit">Create</button>
+      <button id="submit-blog-button" type="submit">Create</button>
     </form>
   );
 };

@@ -35,9 +35,49 @@ describe("Blog app", function () {
 
       cy.get("html").should("not.contain", "Logged In");
 
-      cy.get(".error").should("have.css", "background-color", "rgb(245, 186, 188)");
+      cy.get(".error").should(
+        "have.css",
+        "background-color",
+        "rgb(245, 186, 188)"
+      );
 
       cy.contains("Wrong username or password");
+    });
+  });
+
+  describe("When logged in", function () {
+    beforeEach(function () {
+      cy.get("#username").type("test");
+      cy.get("#password").type("test");
+      cy.get("button").contains("Login").click();
+    });
+
+    it("A blog can be created", function () {
+      cy.contains("create new blog").click();
+      cy.get("#title").type("test title");
+      cy.get("#author").type("test author");
+      cy.get("#url").type("www.test.com");
+      cy.get("#submit-blog-button").click();
+
+      cy.get(".blog-list").contains("test title test author");
+    });
+  });
+
+  describe("When blog created", function () {
+    beforeEach(function () {
+      cy.login({ username: "test", password: "test" });
+      cy.contains("create new blog").click();
+      cy.get("#title").type("test title");
+      cy.get("#author").type("test author");
+      cy.get("#url").type("www.test.com");
+      cy.get("#submit-blog-button").click();
+    });
+
+    it.only("a blog can be liked", function () {
+      cy.contains("view").click();
+      cy.contains("likes 0");
+      cy.contains("like").click();
+      cy.contains("likes 1");
     });
   });
 });

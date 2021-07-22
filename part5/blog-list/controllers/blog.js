@@ -60,7 +60,7 @@ router.delete("/:id", tokenExtractor, userExtractor, async (req, res) => {
   res.status(204).end();
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", tokenExtractor, userExtractor, async (req, res) => {
   const token = req.token;
   const userId = req.userId;
 
@@ -71,7 +71,7 @@ router.put("/:id", async (req, res) => {
   if (!userId) {
     return res.status(401).json({ error: "token missing or invalid" });
   }
-  
+
   const { id } = req.params;
   delete req.body.id;
   delete req.body.__v;
