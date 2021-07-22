@@ -1,6 +1,13 @@
 describe("Blog app", function () {
   beforeEach(function () {
     cy.request("POST", "http://localhost:3003/api/testing/reset");
+
+    cy.request("POST", "http://localhost:3003/api/users", {
+      username: "test",
+      password: "test",
+      name: "test",
+    });
+
     cy.visit("http://localhost:3000");
   });
 
@@ -9,5 +16,28 @@ describe("Blog app", function () {
     cy.get("#username");
     cy.get("#password");
     cy.get("button").contains("Login");
+  });
+
+  describe("Login", function () {
+    it("succeeds with correct credentials", () => {
+      cy.get("#username").type("test");
+      cy.get("#password").type("test");
+      cy.get("button").contains("Login").click();
+
+      cy.contains("test logged in");
+      cy.contains("Logged In");
+    });
+
+    it("fails with wrong credentials", () => {
+      cy.get("#username").type("test");
+      cy.get("#password").type("wrongPassword");
+      cy.get("button").contains("Login").click();
+
+      cy.get("html").should("not.contain", "Logged In");
+
+      cy.get(".error").should("have.css", "background-color", "rgb(245, 186, 188)");
+
+      cy.contains("Wrong username or password");
+    });
   });
 });

@@ -5,7 +5,7 @@ const Message = ({ error, success }) => {
     return (
       <div
         style={{
-          backgroundColor: "#bff5c9",
+          backgroundColor: "rgb(191, 245, 201)",
           padding: "12px",
         }}
       >
@@ -15,8 +15,9 @@ const Message = ({ error, success }) => {
   } else if (error) {
     return (
       <div
+        className="error"
         style={{
-          backgroundColor: "#f5babc",
+          backgroundColor: "rgb(245, 186, 188)",
           padding: "12px",
         }}
       >
