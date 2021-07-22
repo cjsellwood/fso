@@ -81,8 +81,6 @@ const App = () => {
 
   // Handle login
   const handleLogin = async (e) => {
-    console.log("logging in with", username, password);
-
     e.preventDefault();
 
     try {
@@ -110,15 +108,19 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      <Togglable buttonLabel="Login">
-        <LoginForm
-          username={username}
-          password={password}
-          handleLogin={handleLogin}
-          setUsername={setUsername}
-          setPassword={setPassword}
-        />
-      </Togglable>
+      {user ? (
+        <p>{user.name} logged in</p>
+      ) : (
+        <Togglable buttonLabel="Login">
+          <LoginForm
+            username={username}
+            password={password}
+            handleLogin={handleLogin}
+            setUsername={setUsername}
+            setPassword={setPassword}
+          />
+        </Togglable>
+      )}
       <Togglable buttonLabel="New Note" ref={noteFormRef}>
         <NoteForm createNote={createNote} />
       </Togglable>
