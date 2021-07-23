@@ -54,9 +54,15 @@ export const voteAnecdote = (id) => {
 };
 
 export const addAnecdote = (anecdote) => {
-  return {
-    type: "ADD_ANECDOTE",
-    anecdote,
+  return async (dispatch) => {
+    const response = await axios.post("http://localhost:3001/anecdotes", {
+      content: anecdote,
+      votes: 0,
+    });
+    dispatch({
+      type: "ADD_ANECDOTE",
+      anecdote: response.data,
+    });
   };
 };
 

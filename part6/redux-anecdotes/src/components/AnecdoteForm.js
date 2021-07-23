@@ -1,4 +1,3 @@
-import axios from "axios";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { addAnecdote } from "../reducers/anecdoteReducer";
@@ -9,16 +8,15 @@ const AnecdoteForm = () => {
 
   const newAnecdote = (e) => {
     e.preventDefault();
+
     const anecdote = e.target.note.value;
-    axios
-      .post("http://localhost:3001/anecdotes", { content: anecdote, votes: 0 })
-      .then((response) => {
-        dispatch(addAnecdote(response.data));
-        dispatch(setNotification(`new anecdote: ${anecdote}`));
-        setTimeout(() => {
-          dispatch(setNotification(null));
-        }, 5000);
-      });
+    dispatch(addAnecdote(anecdote));
+
+    dispatch(setNotification(`new anecdote: ${anecdote}`));
+    setTimeout(() => {
+      dispatch(setNotification(null));
+    }, 5000);
+    e.target.value = "";
   };
   return (
     <form onSubmit={newAnecdote}>
