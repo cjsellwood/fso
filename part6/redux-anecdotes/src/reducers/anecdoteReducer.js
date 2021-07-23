@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const anecdotesAtStart = [];
 
 const getId = () => (100000 * Math.random()).toFixed(0);
@@ -33,10 +35,14 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export const initializeAnecdotes = (anecdotes) => {
-  return {
-    type: "INITIALIZE_ANECDOTES",
-    anecdotes,
+export const initializeAnecdotes = () => {
+  return async (dispatch) => {
+    const response = await axios.get("http://localhost:3001/anecdotes");
+    const anecdotes = response.data;
+    dispatch({
+      type: "INITIALIZE_ANECDOTES",
+      anecdotes,
+    });
   };
 };
 
