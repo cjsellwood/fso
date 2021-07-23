@@ -1,7 +1,7 @@
 const noteReducer = (state = [], action) => {
   switch (action.type) {
     case "NEW_NOTE":
-      return [...state, action.data]
+      return [...state, action.data];
     case "TOGGLE_IMPORTANCE": {
       const id = action.data.id;
       const noteToChange = state.find((n) => n.id === id);
@@ -14,6 +14,26 @@ const noteReducer = (state = [], action) => {
     default:
       return state;
   }
+};
+
+const generateId = () => Math.floor(Math.random() * 10000000);
+
+export const createNote = (content) => {
+  return {
+    type: "NEW_NOTE",
+    data: {
+      content,
+      important: false,
+      id: generateId(),
+    },
+  };
+};
+
+export const toggleImportanceOf = (id) => {
+  return {
+    type: "TOGGLE_IMPORTANCE",
+    data: { id },
+  };
 };
 
 export default noteReducer;
