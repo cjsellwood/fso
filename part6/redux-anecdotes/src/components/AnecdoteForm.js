@@ -12,10 +12,7 @@ const AnecdoteForm = () => {
     const anecdote = e.target.note.value;
     dispatch(addAnecdote(anecdote));
 
-    dispatch(setNotification(`new anecdote: ${anecdote}`));
-    setTimeout(() => {
-      dispatch(setNotification(null));
-    }, 5000);
+    dispatch(setNotification(`new anecdote: ${anecdote}`, 5))
     e.target.value = "";
   };
   return (
