@@ -31,7 +31,6 @@ const reducer = (state = initialState, action) => {
         anecdote.id === action.id ? votedAnecdote : anecdote
       );
       return newAnecdotes;
-
     case "ADD_ANECDOTE":
       return [...state, { content: action.anecdote, id: getId(), votes: 0 }];
     default:
