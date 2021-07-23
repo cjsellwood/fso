@@ -27,7 +27,7 @@ const reducer = (state = initialState, action) => {
       );
       return newAnecdotes;
     case "ADD_ANECDOTE":
-      return [...state, { content: action.anecdote, id: getId(), votes: 0 }];
+      return [...state, { ...action.anecdote }];
     default:
       return state;
   }
