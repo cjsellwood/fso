@@ -22,7 +22,7 @@ const reducer = (state = initialState, action) => {
     case "INITIALIZE_ANECDOTES":
       return action.anecdotes;
     case "VOTE":
-      const votedAnecdote = state.find((anecdote) => anecdote.id === action.id);
+      const votedAnecdote = action.anecdote;
       votedAnecdote.votes = votedAnecdote.votes + 1;
       const newAnecdotes = state.map((anecdote) =>
         anecdote.id === action.id ? votedAnecdote : anecdote
@@ -46,10 +46,17 @@ export const initializeAnecdotes = () => {
   };
 };
 
-export const voteAnecdote = (id) => {
-  return {
-    type: "VOTE",
-    id,
+export const voteAnecdote = (anecdote) => {
+  return async (dispatch) => {
+    await axios.put("http://localhost:3001/anecdotes/" + anecdote.id, {
+      content: anecdote.content,
+      id: anecdote.id,
+      votes: anecdote.votes + 1,
+    });
+    dispatch({
+      type: "VOTE",
+      anecdote,
+    });
   };
 };
 
