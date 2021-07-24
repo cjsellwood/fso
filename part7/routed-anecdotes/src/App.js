@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Switch, Link, Route, useRouteMatch } from "react-router-dom";
+import {
+  Switch,
+  Link,
+  Route,
+  useRouteMatch,
+  useHistory,
+} from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -130,6 +136,10 @@ const Anecdote = ({ anecdote }) => {
   );
 };
 
+const Notification = ({ notification }) => {
+  return <div>{notification}</div>;
+};
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -149,10 +159,16 @@ const App = () => {
   ]);
 
   const [notification, setNotification] = useState("");
+  const history = useHistory();
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
+    history.push("/");
+    setNotification(`New anecdote: ${anecdote.content}`);
+    setTimeout(() => {
+      setNotification("");
+    }, 10000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -175,6 +191,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
       <Switch>
         <Route path="/" exact>
           <AnecdoteList anecdotes={anecdotes} />
