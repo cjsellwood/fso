@@ -11,6 +11,7 @@ import { initializeBlogs } from "./store/blogsReducer";
 import { setUser } from "./store/userReducer";
 import { Switch, Route } from "react-router-dom";
 import Users from "./components/Users";
+import User from "./components/User";
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -56,6 +57,9 @@ const App = () => {
               <BlogDisplay />
             </React.Fragment>
           )}
+        </Route>
+        <Route path="/users/:id">
+          <User />
         </Route>
         <Route path="/users">
           <Users />
