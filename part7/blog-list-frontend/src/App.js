@@ -12,6 +12,7 @@ import { setUser } from "./store/userReducer";
 import { Switch, Route } from "react-router-dom";
 import Users from "./components/Users";
 import User from "./components/User";
+import SingleBlog from "./components/SingleBlog";
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -38,6 +39,7 @@ const App = () => {
 
   return (
     <div>
+      <Message />
       <h1>Blogs</h1>
       {user === null ? (
         <LoginForm />
@@ -64,8 +66,10 @@ const App = () => {
         <Route path="/users">
           <Users />
         </Route>
+        <Route path="/blogs/:id">
+          <SingleBlog />
+        </Route>
       </Switch>
-      <Message />
     </div>
   );
 };
