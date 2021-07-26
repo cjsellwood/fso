@@ -39,7 +39,24 @@ const blogsReducer = (state = initialState, action) => {
         }
       });
 
-      return [...likedBlogs];
+      return likedBlogs;
+    }
+
+    case "ADD_COMMENT": {
+      const blogsCopy = [...state];
+      const newBlogs = blogsCopy.map((blog) => {
+        if (blog.id === action.id) {
+          return {
+            ...blog,
+            comments: [...blog.comments, action.comment],
+          };
+        } else {
+          return {
+            ...blog,
+          };
+        }
+      });
+      return newBlogs;
     }
     default:
       return state;
@@ -104,6 +121,17 @@ export const deleteBlog = (id) => {
         type: "DELETE_BLOG",
         id,
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const addComment = (id, comment) => {
+  return async (dispatch) => {
+    try {
+      await blogService.addComment(id, comment);
+      dispatch({ type: "ADD_COMMENT", id, comment });
     } catch (error) {
       console.log(error);
     }

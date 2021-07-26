@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { likeBlog, deleteBlog } from "../store/blogsReducer";
+import { likeBlog, deleteBlog, addComment } from "../store/blogsReducer";
 
 const SingleBlog = () => {
+  const [newComment, setNewComment] = useState("");
   const { id } = useParams();
   const blog = useSelector((state) =>
     state.blogs.find((blog) => blog.id === id)
@@ -14,6 +15,13 @@ const SingleBlog = () => {
   if (!blog) {
     return null;
   }
+
+  const submitComment = (e) => {
+    e.preventDefault();
+
+    dispatch(addComment(blog.id, newComment));
+    setNewComment("");
+  };
 
   return (
     <div>
@@ -28,6 +36,20 @@ const SingleBlog = () => {
       {blog.user.username === user.username ? (
         <button onClick={() => dispatch(deleteBlog(blog.id))}>delete</button>
       ) : null}
+      <h3>comments</h3>
+      <form onSubmit={submitComment}>
+        <input
+          type="text"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <button>add comment</button>
+      </form>
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={`${blog.id}-comment-${index}`}>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };

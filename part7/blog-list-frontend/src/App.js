@@ -10,7 +10,7 @@ import NewBlogForm from "./components/NewBlogForm";
 import { setSuccess } from "./store/notificationReducer";
 import { initializeBlogs } from "./store/blogsReducer";
 import { setUser } from "./store/userReducer";
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import Users from "./components/Users";
 import User from "./components/User";
 import SingleBlog from "./components/SingleBlog";
