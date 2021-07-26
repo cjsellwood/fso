@@ -85,4 +85,19 @@ router.put("/:id", tokenExtractor, userExtractor, async (req, res) => {
   res.json(updated);
 });
 
+// Add comment to blog
+router.post("/:id/comments", async (req, res) => {
+  const { comment } = req.body;
+  const { id } = req.params;
+  const updated = await Blog.findByIdAndUpdate(
+    id,
+    {
+      $push: { comments: comment },
+    },
+    { new: true }
+  );
+
+  res.json(updated);
+});
+
 module.exports = router;
