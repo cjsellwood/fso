@@ -1,3 +1,4 @@
+import { Typography, Link as MUILink } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
@@ -15,12 +16,14 @@ const User = () => {
 
   return (
     <div>
-      <h1>{user.name}</h1>
-      <h3>added blogs</h3>
+      <Typography variant="h3">{user.name}</Typography>
+      <Typography variant="h5">added blogs</Typography>
       <ul>
         {user.blogs.map((blog) => (
           <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+            <MUILink component={Link} to={`/blogs/${blog.id}`}>
+              {blog.title}
+            </MUILink>
           </li>
         ))}
       </ul>

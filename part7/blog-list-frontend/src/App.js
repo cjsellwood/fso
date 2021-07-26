@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 import blogService from "./services/blogs";
 import BlogDisplay from "./components/BlogDisplay";
@@ -15,6 +14,14 @@ import Users from "./components/Users";
 import User from "./components/User";
 import SingleBlog from "./components/SingleBlog";
 import Nav from "./components/Nav";
+import { Container, Typography } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core";
+import "./App.css";
+
+const theme = createTheme();
+
+theme.spacing(4);
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -40,33 +47,37 @@ const App = () => {
   };
 
   return (
-    <div>
-      <Nav logoutUser={logoutUser} />
-      <Message />
-      <h1>Blogs</h1>
-      {user === null ? <LoginForm /> : null}
-      <Switch>
-        <Route path="/" exact>
-          {user === null ? null : (
-            <React.Fragment>
-              <Togglable buttonLabel="create new blog">
-                <NewBlogForm />
-              </Togglable>
-              <BlogDisplay />
-            </React.Fragment>
-          )}
-        </Route>
-        <Route path="/users/:id">
-          <User />
-        </Route>
-        <Route path="/users">
-          <Users />
-        </Route>
-        <Route path="/blogs/:id">
-          <SingleBlog />
-        </Route>
-      </Switch>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Container style={{ marginTop: "84px" }}>
+        <Nav logoutUser={logoutUser} />
+        <Message />
+        {user === null ? <LoginForm /> : null}
+        <Switch>
+          <Route path="/" exact>
+            {user === null ? null : (
+              <React.Fragment>
+                <Typography variant="h2" style={{ textAlign: "center" }}>
+                  Blogs
+                </Typography>
+                <Togglable buttonLabel="create new blog">
+                  <NewBlogForm />
+                </Togglable>
+                <BlogDisplay />
+              </React.Fragment>
+            )}
+          </Route>
+          <Route path="/users/:id">
+            <User />
+          </Route>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/blogs/:id">
+            <SingleBlog />
+          </Route>
+        </Switch>
+      </Container>
+    </ThemeProvider>
   );
 };
 

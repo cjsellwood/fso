@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { Card, CardContent, Link as MUILink } from "@material-ui/core";
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -12,13 +13,15 @@ const Blog = ({ blog }) => {
   };
 
   return (
-    <div style={blogStyle}>
-      <div>
-        <Link to={`/blogs/${blog.id}`}>
-          <span>{blog.title}</span> <span>{blog.author}</span>
-        </Link>
-      </div>
-    </div>
+    <Card style={blogStyle}>
+      <CardContent>
+        <div>
+          <MUILink component={Link} to={`/blogs/${blog.id}`}>
+            <span>{blog.title}</span> <span>{blog.author}</span>
+          </MUILink>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

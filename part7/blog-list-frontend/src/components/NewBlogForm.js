@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addBlog } from "../store/blogsReducer";
+import { Typography, TextField, Button } from "@material-ui/core";
 
 const NewBlogForm = () => {
   const [newBlog, setNewBlog] = useState({
@@ -33,40 +34,47 @@ const NewBlogForm = () => {
 
   return (
     <form onSubmit={submitBlog}>
-      <h2>Create New</h2>
+      <Typography variant="h4">
+        Create New
+      </Typography>
       <div>
-        <label htmlFor="title">title</label>
-        <input
-          type="text"
+        <TextField
+          label="title"
           id="title"
           name="title"
           value={newBlog.title}
           onChange={(e) => newBlogInput(e)}
+          variant="outlined"
+          style={{ margin: "12px" }}
         />
       </div>
       <div>
-        <label htmlFor="author">author</label>
-        <input
+        <TextField
+          label="author"
           type="text"
           id="author"
           name="author"
           value={newBlog.author}
           onChange={(e) => newBlogInput(e)}
+          variant="outlined"
+          style={{ margin: "12px" }}
         />
       </div>
       <div>
-        <label htmlFor="url">url</label>
-        <input
+        <TextField
+          label="url"
           type="text"
           id="url"
           name="url"
           value={newBlog.url}
           onChange={(e) => newBlogInput(e)}
+          variant="outlined"
+          style={{ margin: "12px" }}
         />
       </div>
-      <button id="submit-blog-button" type="submit">
+      <Button color="secondary" id="submit-blog-button" type="submit">
         Create
-      </button>
+      </Button>
     </form>
   );
 };

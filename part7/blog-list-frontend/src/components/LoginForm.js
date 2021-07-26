@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../store/userReducer";
 import { setSuccess, setError } from "../store/notificationReducer";
+import { Button, TextField, Typography } from "@material-ui/core";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
-  const loginUser = async (e) => {
+  const loginUser = (e) => {
     e.preventDefault();
     try {
-      await dispatch(login(username, password));
+      dispatch(login(username, password));
       setUsername("");
       setPassword("");
       dispatch(setSuccess("Logged In"));
@@ -21,10 +22,14 @@ const LoginForm = () => {
   };
   return (
     <form onSubmit={loginUser}>
-      <h2>Login</h2>
+      <Typography variant="h4">
+        Login
+      </Typography>
       <div>
-        <label htmlFor="username">Username</label>
-        <input
+        <TextField
+          style={{ margin: "8px" }}
+          label="username"
+          variant="outlined"
           type="text"
           id="username"
           value={username}
@@ -32,15 +37,19 @@ const LoginForm = () => {
         />
       </div>
       <div>
-        <label htmlFor="password">Password</label>
-        <input
+        <TextField
+          style={{ margin: "8px" }}
+          label="password"
+          variant="outlined"
           type="password"
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button type="submit">Login</button>
+      <Button type="submit" color="secondary">
+        Login
+      </Button>
     </form>
   );
 };

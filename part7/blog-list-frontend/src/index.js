@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { BrowserRouter as Router } from "react-router-dom";
+import { CssBaseline } from "@material-ui/core";
 
 import notificationReducer from "./store/notificationReducer";
 import blogsReducer from "./store/blogsReducer";
@@ -24,6 +25,7 @@ const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
 ReactDOM.render(
   <Router>
     <Provider store={store}>
+      <CssBaseline />
       <App />
     </Provider>
   </Router>,

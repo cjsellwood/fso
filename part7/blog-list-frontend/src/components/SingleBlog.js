@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { likeBlog, deleteBlog, addComment } from "../store/blogsReducer";
+import {
+  Container,
+  Link as MUILink,
+  Typography,
+  Button,
+  TextField,
+} from "@material-ui/core";
 
 const SingleBlog = () => {
   const [newComment, setNewComment] = useState("");
@@ -18,39 +25,50 @@ const SingleBlog = () => {
 
   const submitComment = (e) => {
     e.preventDefault();
+    if (newComment === "") {
+      return;
+    }
 
     dispatch(addComment(blog.id, newComment));
     setNewComment("");
   };
 
   return (
-    <div>
-      <h1>
+    <Container>
+      <Typography variant="h3">
         {blog.title} {blog.author}
-      </h1>
-      <a href={blog.url}>{blog.url}</a>
+      </Typography>
+      <MUILink href={blog.url}>{blog.url}</MUILink>
       <br />
       <span>{blog.likes} likes </span>
-      <button onClick={() => dispatch(likeBlog(blog))}>like</button>
+      <Button color="secondary" onClick={() => dispatch(likeBlog(blog))}>
+        like
+      </Button>
       <p>added by {blog.user.name}</p>
       {blog.user.username === user.username ? (
-        <button onClick={() => dispatch(deleteBlog(blog.id))}>delete</button>
+        <Button color="secondary" onClick={() => dispatch(deleteBlog(blog.id))}>
+          delete
+        </Button>
       ) : null}
-      <h3>comments</h3>
+      <Typography variant="h6">Comments</Typography>
       <form onSubmit={submitComment}>
-        <input
+        <TextField
+          variant="outlined"
           type="text"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        <button>add comment</button>
+        <br />
+        <Button color="secondary" type="submit">
+          add comment
+        </Button>
       </form>
       <ul>
         {blog.comments.map((comment, index) => (
           <li key={`${blog.id}-comment-${index}`}>{comment}</li>
         ))}
       </ul>
-    </div>
+    </Container>
   );
 };
 

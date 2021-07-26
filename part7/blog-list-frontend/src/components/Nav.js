@@ -1,30 +1,30 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { AppBar, Button, Toolbar } from "@material-ui/core";
 
 const Nav = ({ logoutUser }) => {
   const user = useSelector((state) => state.user);
   return (
-    <nav className="nav">
-      <ul>
-        <li>
+    <AppBar position="fixed">
+      <Toolbar>
+        <Button color="inherit">
           <Link to={"/"}>blogs</Link>
-        </li>
-        <li>
+        </Button>
+        <Button color="inherit">
           <Link to={"/users"}>users</Link>
-        </li>
+        </Button>
+        <div style={{ flexGrow: 1 }}></div>
         {user === null ? null : (
           <React.Fragment>
-            <li>
-              <p>{user.name} logged in</p>
-            </li>
-            <li>
-              <button onClick={logoutUser}>Logout</button>
-            </li>
+            <p>{user.name} logged in</p>
+            <Button color="inherit" onClick={logoutUser}>
+              Logout
+            </Button>
           </React.Fragment>
         )}
-      </ul>
-    </nav>
+      </Toolbar>
+    </AppBar>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@material-ui/core";
 
 const Togglable = (props) => {
   const [visible, setVisible] = useState(false);
@@ -7,10 +8,14 @@ const Togglable = (props) => {
       {visible ? (
         <div>
           {props.children}
-          <button onClick={() => setVisible(false)}>Cancel</button>
+          <Button color="secondary" onClick={() => setVisible(false)}>
+            Cancel
+          </Button>
         </div>
       ) : (
-        <button onClick={() => setVisible(true)}>{props.buttonLabel}</button>
+        <Button color="secondary" onClick={() => setVisible(true)}>
+          {props.buttonLabel}
+        </Button>
       )}
     </div>
   );
