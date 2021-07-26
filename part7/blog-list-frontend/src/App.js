@@ -60,50 +60,6 @@ const App = () => {
     dispatch(addBlog(newBlog, user));
   };
 
-  const likeBlog = async (id) => {
-    let blogsCopy = [...blogs];
-    const updatedBlog = { ...blogsCopy.find((blog) => blog.id === id) };
-
-    updatedBlog.likes = updatedBlog.likes + 1;
-    updatedBlog.user = updatedBlog.user.id;
-
-    try {
-      const result = await blogService.update(updatedBlog);
-
-      const likedBlogs = blogsCopy.map((blog) => {
-        if (blog.id === result.id) {
-          return {
-            ...blog,
-            likes: result.likes,
-          };
-        } else {
-          return {
-            ...blog,
-          };
-        }
-      });
-      // setBlogs(likedBlogs);
-
-      dispatch(setSuccess(`Blog liked: ${result.title}`));
-    } catch (error) {
-      dispatch(setError(error.response.data.error));
-    }
-  };
-
-  const deleteBlog = async (id) => {
-    let blogsCopy = [...blogs];
-    if (!window.confirm("Are you sure you want to delete blog")) {
-      return;
-    }
-
-    try {
-      await blogService.deleteBlog(id);
-      // setBlogs(blogsCopy.filter((blog) => blog.id !== id));
-    } catch (error) {
-      dispatch(setError(error.response.data.error));
-    }
-  };
-
   return (
     <div>
       <h1>Blogs</h1>
@@ -125,8 +81,6 @@ const App = () => {
           </Togglable>
           <BlogDisplay
             blogs={blogs}
-            likeBlog={likeBlog}
-            deleteBlog={deleteBlog}
             user={user}
           />
         </React.Fragment>

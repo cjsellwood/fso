@@ -1,7 +1,7 @@
 import React from "react";
 import Blog from "./Blog";
 
-const BlogDisplay = ({ blogs, likeBlog, deleteBlog, user }) => {
+const BlogDisplay = ({ blogs, user }) => {
   return (
     <div className="blog-list">
       {blogs
@@ -10,8 +10,6 @@ const BlogDisplay = ({ blogs, likeBlog, deleteBlog, user }) => {
           <Blog
             key={blog.id}
             blog={blog}
-            likeBlog={likeBlog}
-            deleteBlog={deleteBlog}
             user={user}
           />
         ))}
