@@ -9,6 +9,8 @@ import NewBlogForm from "./components/NewBlogForm";
 import { setSuccess } from "./store/notificationReducer";
 import { initializeBlogs } from "./store/blogsReducer";
 import { setUser } from "./store/userReducer";
+import { Switch, Route } from "react-router-dom";
+import Users from "./components/Users";
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -36,19 +38,30 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Message />
       {user === null ? (
         <LoginForm />
       ) : (
         <React.Fragment>
           <p>{user.name} logged in</p>
           <button onClick={logoutUser}>Logout</button>
-          <Togglable buttonLabel="create new blog">
-            <NewBlogForm />
-          </Togglable>
-          <BlogDisplay />
         </React.Fragment>
       )}
+      <Switch>
+        <Route path="/" exact>
+          {user === null ? null : (
+            <React.Fragment>
+              <Togglable buttonLabel="create new blog">
+                <NewBlogForm />
+              </Togglable>
+              <BlogDisplay />
+            </React.Fragment>
+          )}
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+      </Switch>
+      <Message />
     </div>
   );
 };
