@@ -8,10 +8,12 @@ import { composeWithDevTools } from "redux-devtools-extension";
 
 import notificationReducer from "./store/notificationReducer";
 import blogsReducer from "./store/blogsReducer";
+import userReducer from "./store/userReducer";
 
 const reducer = combineReducers({
   notification: notificationReducer,
   blogs: blogsReducer,
+  user: userReducer,
 });
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));

@@ -1,11 +1,16 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addBlog } from "../store/blogsReducer";
 
-const NewBlogForm = ({ createBlog }) => {
+const NewBlogForm = () => {
   const [newBlog, setNewBlog] = useState({
     title: "",
     author: "",
     url: "",
   });
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
   const newBlogInput = (e) => {
     setNewBlog({
@@ -17,7 +22,7 @@ const NewBlogForm = ({ createBlog }) => {
   const submitBlog = (e) => {
     e.preventDefault();
 
-    createBlog(newBlog);
+    dispatch(addBlog(newBlog, user));
 
     setNewBlog({
       title: "",
@@ -59,7 +64,9 @@ const NewBlogForm = ({ createBlog }) => {
           onChange={(e) => newBlogInput(e)}
         />
       </div>
-      <button id="submit-blog-button" type="submit">Create</button>
+      <button id="submit-blog-button" type="submit">
+        Create
+      </button>
     </form>
   );
 };
