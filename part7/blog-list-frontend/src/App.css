@@ -1,0 +1,14 @@
+* {
+  margin: 0;
+}
+
+.nav ul {
+  display: flex;
+  list-style: none;
+  background-color: rgb(230, 230, 230);
+}
+
+.nav li {
+  padding: 8px;
+  display: block;
+}

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 import blogService from "./services/blogs";
 import BlogDisplay from "./components/BlogDisplay";
@@ -9,10 +10,11 @@ import NewBlogForm from "./components/NewBlogForm";
 import { setSuccess } from "./store/notificationReducer";
 import { initializeBlogs } from "./store/blogsReducer";
 import { setUser } from "./store/userReducer";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Link } from "react-router-dom";
 import Users from "./components/Users";
 import User from "./components/User";
 import SingleBlog from "./components/SingleBlog";
+import Nav from "./components/Nav";
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -39,16 +41,10 @@ const App = () => {
 
   return (
     <div>
+      <Nav logoutUser={logoutUser} />
       <Message />
       <h1>Blogs</h1>
-      {user === null ? (
-        <LoginForm />
-      ) : (
-        <React.Fragment>
-          <p>{user.name} logged in</p>
-          <button onClick={logoutUser}>Logout</button>
-        </React.Fragment>
-      )}
+      {user === null ? <LoginForm /> : null}
       <Switch>
         <Route path="/" exact>
           {user === null ? null : (
