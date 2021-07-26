@@ -7,9 +7,11 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import notificationReducer from "./store/notificationReducer";
+import blogsReducer from "./store/blogsReducer";
 
 const reducer = combineReducers({
   notification: notificationReducer,
+  blogs: blogsReducer,
 });
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));

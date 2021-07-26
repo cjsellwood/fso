@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import BlogDisplay from "./components/BlogDisplay";
@@ -8,9 +8,11 @@ import Message from "./components/Message";
 import Togglable from "./components/Togglable";
 import NewBlogForm from "./components/NewBlogForm";
 import { setError, setSuccess } from "./store/notificationReducer";
+import { initializeBlogs, addBlog } from "./store/blogsReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -18,7 +20,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    dispatch(initializeBlogs());
   }, []);
 
   useEffect(() => {
@@ -54,24 +56,8 @@ const App = () => {
     dispatch(setSuccess("Logged Out"));
   };
 
-  const createBlog = async (newBlog) => {
-    try {
-      const result = await blogService.create(newBlog);
-      setBlogs([
-        ...blogs,
-        {
-          ...result,
-          user: {
-            id: result.user,
-            username: user.username,
-          },
-        },
-      ]);
-
-      dispatch(setSuccess(`Blog added: ${result.title}`));
-    } catch (error) {
-      dispatch(setError(error.response.data.error));
-    }
+  const createBlog = (newBlog) => {
+    dispatch(addBlog(newBlog, user));
   };
 
   const likeBlog = async (id) => {
@@ -96,7 +82,7 @@ const App = () => {
           };
         }
       });
-      setBlogs(likedBlogs);
+      // setBlogs(likedBlogs);
 
       dispatch(setSuccess(`Blog liked: ${result.title}`));
     } catch (error) {
@@ -112,7 +98,7 @@ const App = () => {
 
     try {
       await blogService.deleteBlog(id);
-      setBlogs(blogsCopy.filter((blog) => blog.id !== id));
+      // setBlogs(blogsCopy.filter((blog) => blog.id !== id));
     } catch (error) {
       dispatch(setError(error.response.data.error));
     }
