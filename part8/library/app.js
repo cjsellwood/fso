@@ -94,11 +94,12 @@ const resolvers = {
             book.author === args.author && book.genres.includes(args.genre)
         );
       } else if (args.author) {
+        //TODO
         return books.filter((book) => book.author === args.author);
       } else if (args.genre) {
-        return Book.find({ genres: { $in: [args.genre] } });
+        return Book.find({ genres: { $in: [args.genre] } }).populate("author");
       } else {
-        return Book.find({});
+        return Book.find({}).populate("author");
       }
     },
     allAuthors: async (root, args) => {
