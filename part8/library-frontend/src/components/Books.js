@@ -7,7 +7,6 @@ const Books = (props) => {
   const result = useQuery(ALL_BOOKS);
 
   useEffect(() => {
-    console.log(result.data)
     if (result.data) {
       setBooks(result.data.allBooks);
     }
