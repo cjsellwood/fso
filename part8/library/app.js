@@ -144,6 +144,7 @@ const resolvers = {
     },
     allBooks: (root, args) => {
       if (args.author && args.genre) {
+        //TODO
         return books.filter(
           (book) =>
             book.author === args.author && book.genres.includes(args.genre)
@@ -151,19 +152,26 @@ const resolvers = {
       } else if (args.author) {
         return books.filter((book) => book.author === args.author);
       } else if (args.genre) {
-        return books.filter((book) => book.genres.includes(args.genre));
+        return Book.find({ genres: { $in: [args.genre] } });
       } else {
         return Book.find({});
       }
     },
-    allAuthors: (root, args) => {
-      // return authors.map((author) => {
-      //   return {
-      //     ...author,
-      //     bookCount: books.filter((book) => book.author === author.name).length,
-      //   };
-      // });
-      return Author.find({});
+    allAuthors: async (root, args) => {
+      const authors = await Author.find({});
+      const books = await Book.find({});
+
+      const countedAuthors = authors.map((author) => {
+        const bookCount = books.filter(
+          (book) => book.author.toString() === author._id.toString()
+        ).length;
+
+        return {
+          ...author._doc,
+          bookCount,
+        };
+      });
+      return countedAuthors;
     },
   },
   Mutation: {
@@ -181,20 +189,17 @@ const resolvers = {
         author: author._id,
       });
       const saved = await newBook.save();
-      console.log({ ...saved._doc, author: { ...author._doc } });
       return { ...saved._doc, author: { ...author._doc } };
     },
-    editAuthor: (root, args) => {
-      const author = authors.find((author) => author.name === args.name);
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ author: args.author });
       if (!author) {
         return null;
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map((author) =>
-        author.name == args.name ? updatedAuthor : author
-      );
-      return updatedAuthor;
+      author.born = args.setBornTo;
+      const saved = await author.save();
+      return saved;
     },
   },
 };
