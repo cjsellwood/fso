@@ -1,22 +1,15 @@
 import { useLazyQuery } from "@apollo/client";
-import jwtDecode from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { GENRE_BOOKS } from "../queries";
 
 const Recommend = (props) => {
-  const [favoriteGenre, setFavoriteGenre] = useState(null);
+
   const [books, setBooks] = useState([]);
   const [getBooks, result] = useLazyQuery(GENRE_BOOKS);
 
   useEffect(() => {
-    if (props.token) {
-      setFavoriteGenre(jwtDecode(props.token).favoriteGenre);
-    }
-  }, [props.token]);
-
-  useEffect(() => {
-    getBooks({ variables: { genre: favoriteGenre } });
-  }, [getBooks, favoriteGenre]);
+    getBooks({ variables: { genre: props.favoriteGenre } });
+  }, [getBooks, props.favoriteGenre]);
 
   useEffect(() => {
     if (result.data) {

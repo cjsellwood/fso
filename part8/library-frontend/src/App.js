@@ -4,11 +4,13 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import { useApolloClient } from "@apollo/client";
+import jwtDecode from "jwt-decode";
 import Recommend from "./components/Recommend";
 
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(null);
+  const [favoriteGenre, setFavoriteGenre] = useState(null);
   const client = useApolloClient();
 
   useEffect(() => {
@@ -17,6 +19,12 @@ const App = () => {
       setToken(storedToken);
     }
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      setFavoriteGenre(jwtDecode(token).favoriteGenre);
+    }
+  }, [token]);
 
   const logout = () => {
     setToken(null);
@@ -43,8 +51,8 @@ const App = () => {
       </div>
       <Authors show={page === "authors"} />
       <Books show={page === "books"} />
-      <NewBook show={page === "add"} />
-      <Recommend show={page === "recommend"} token={token} />
+      <NewBook show={page === "add"} favoriteGenre={favoriteGenre} />
+      <Recommend show={page === "recommend"} favoriteGenre={favoriteGenre} />
       <LoginForm
         show={page === "login"}
         setToken={setToken}
