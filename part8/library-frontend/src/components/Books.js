@@ -19,7 +19,6 @@ const Books = (props) => {
           }
         });
       });
-      console.log(newGenres);
       setGenres(newGenres);
     }
   }, [result]);
