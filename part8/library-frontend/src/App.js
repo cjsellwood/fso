@@ -6,7 +6,7 @@ import LoginForm from "./components/LoginForm";
 import { useApolloClient, useSubscription } from "@apollo/client";
 import jwtDecode from "jwt-decode";
 import Recommend from "./components/Recommend";
-import { BOOK_ADDED } from "./queries";
+import { ALL_BOOKS, BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -33,11 +33,24 @@ const App = () => {
     client.resetStore();
   };
 
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) =>
+      set.map((p) => p.id).includes(object.id);
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS });
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks: dataInStore.allBooks.concat(addedBook) },
+      });
+    }
+  };
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      window.alert(
-        `book added: ${subscriptionData.data.bookAdded.title} - ${subscriptionData.data.bookAdded.author.name}`
-      );
+      const addedBook = subscriptionData.data.bookAdded;
+      window.alert(`book added: ${addedBook.title} - ${addedBook.author.name}`);
+      updateCacheWith(addedBook);
     },
   });
 
@@ -60,7 +73,11 @@ const App = () => {
       </div>
       <Authors show={page === "authors"} />
       <Books show={page === "books"} />
-      <NewBook show={page === "add"} favoriteGenre={favoriteGenre} />
+      <NewBook
+        show={page === "add"}
+        favoriteGenre={favoriteGenre}
+        updateCacheWith={updateCacheWith}
+      />
       <Recommend show={page === "recommend"} favoriteGenre={favoriteGenre} />
       <LoginForm
         show={page === "login"}
