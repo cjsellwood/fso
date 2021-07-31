@@ -3,9 +3,10 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useSubscription } from "@apollo/client";
 import jwtDecode from "jwt-decode";
 import Recommend from "./components/Recommend";
+import { BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -31,6 +32,14 @@ const App = () => {
     localStorage.removeItem("library-user-token");
     client.resetStore();
   };
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(
+        `book added: ${subscriptionData.data.bookAdded.title} - ${subscriptionData.data.bookAdded.author.name}`
+      );
+    },
+  });
 
   return (
     <div>
