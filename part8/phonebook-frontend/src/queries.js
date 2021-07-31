@@ -1,13 +1,23 @@
 import { gql } from "@apollo/client";
 
-export const ALL_PERSONS = gql`
-  query {
-    allPersons {
-      name
-      phone
-      id
+const PERSON_DETAILS = gql`
+  fragment PersonDetails on Person {
+    name
+    phone
+    address {
+      street
+      city
     }
   }
+`;
+
+export const ALL_PERSONS = gql`
+  {
+    allPersons {
+      ...PersonDetails
+    }
+  }
+  ${PERSON_DETAILS}
 `;
 
 export const FIND_PERSON = gql`
@@ -63,4 +73,13 @@ export const LOGIN = gql`
       value
     }
   }
+`;
+
+export const PERSON_ADDED = gql`
+  subscription {
+    personAdded {
+      ...PersonDetails
+    }
+  }
+  ${PERSON_DETAILS}
 `;

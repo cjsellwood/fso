@@ -3,12 +3,14 @@ const {
   gql,
   UserInputError,
   AuthenticationError,
+  PubSub,
 } = require("apollo-server");
 const { v1: uuid } = require("uuid");
 const mongoose = require("mongoose");
 const Person = require("./models/person");
 const User = require("./models/user");
 const jwt = require("jsonwebtoken");
+const pubsub = new PubSub();
 
 const JWT_SECRET = "SECRET";
 
@@ -30,28 +32,7 @@ mongoose
     console.log("error connection to MongoDB:", error.message);
   });
 
-let persons = [
-  {
-    name: "Arto Hellas",
-    phone: "040-123543",
-    street: "Tapiolankatu 5 A",
-    city: "Espoo",
-    id: "3d594650-3436-11e9-bc57-8b80ba54c431",
-  },
-  {
-    name: "Matti Luukkainen",
-    phone: "040-432342",
-    street: "Malminkaari 10 A",
-    city: "Helsinki",
-    id: "3d599470-3436-11e9-bc57-8b80ba54c431",
-  },
-  {
-    name: "Venla Ruuska",
-    street: "Nallemäentie 22 C",
-    city: "Helsinki",
-    id: "3d599471-3436-11e9-bc57-8b80ba54c431",
-  },
-];
+mongoose.set("debug", true);
 
 const typeDefs = gql`
   enum YesNo {
@@ -67,6 +48,7 @@ const typeDefs = gql`
     name: String!
     phone: String
     address: Address!
+    friendOf: [User!]!
     id: ID!
   }
 
@@ -99,6 +81,9 @@ const typeDefs = gql`
     login(username: String!, password: String!): Token
     addAsFriend(name: String!): User
   }
+  type Subscription {
+    personAdded: Person!
+  }
 `;
 
 const resolvers = {
@@ -106,9 +91,12 @@ const resolvers = {
     personCount: () => Person.collection.countDocuments(),
     allPersons: (root, args) => {
       if (!args.phone) {
-        return Person.find({});
+        return Person.find({}).populate("friendOf");
       }
-      return Person.find({ phone: { $exists: args.phone === "YES" } });
+      console.log("Person.find_v2");
+      return Person.find({ phone: { $exists: args.phone === "YES" } }).populate(
+        "friendOf"
+      );
     },
     findPerson: (root, args) => Person.findOne({ name: args.name }),
     me: (root, args, context) => {
@@ -121,6 +109,15 @@ const resolvers = {
         street: root.street,
         city: root.city,
       };
+    },
+    friendOf: async (root) => {
+      const friends = await User.find({
+        friends: {
+          $in: [root._id],
+        },
+      });
+      console.log("User.find");
+      return friends;
     },
   },
   Mutation: {
@@ -141,6 +138,9 @@ const resolvers = {
           invalidArgs: args,
         });
       }
+
+      pubsub.publish("PERSON_ADDED", { personAdded: person });
+
       return person;
     },
 
@@ -200,6 +200,11 @@ const resolvers = {
       return currentUser;
     },
   },
+  Subscription: {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterator(["PERSON_ADDED"]),
+    },
+  },
 };
 
 const server = new ApolloServer({
@@ -217,6 +222,7 @@ const server = new ApolloServer({
   },
 });
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`);
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`);
 });
