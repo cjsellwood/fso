@@ -34,6 +34,8 @@ mongoose
     console.log("error connection to MongoDB:", error.message);
   });
 
+mongoose.set("debug", true);
+
 const typeDefs = gql`
   type User {
     username: String!
@@ -109,17 +111,17 @@ const resolvers = {
       }
     },
     allAuthors: async (root, args) => {
-      const authors = await Author.find({});
+      const authors = await Author.find({}).populate("books");
       const books = await Book.find({});
 
       const countedAuthors = authors.map((author) => {
-        const bookCount = books.filter(
-          (book) => book.author.toString() === author._id.toString()
-        ).length;
+        // const bookCount = books.filter(
+        //   (book) => book.author.toString() === author._id.toString()
+        // ).length;
 
         return {
           ...author._doc,
-          bookCount,
+          bookCount: author._doc.books.length,
         };
       });
       return countedAuthors;
