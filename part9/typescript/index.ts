@@ -8,7 +8,6 @@ app.get("/ping", (_req, res) => {
 
 app.post("/calculate", (req, res) => {
   const { value1, value2, op } = req.body;
-  const value3: any = 1
 
   const result = calculator(value1, value2, op);
   res.send(result);

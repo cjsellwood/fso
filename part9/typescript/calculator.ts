@@ -1,5 +1,3 @@
-
-
 type Operation = "multiply" | "add" | "divide";
 type Result = string | number;
 
