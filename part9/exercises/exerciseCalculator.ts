@@ -1,30 +1,28 @@
 interface DailyExercises {
-  dailyExercises: Array<number>,
-  target: number,
+  dailyExercises: Array<number>;
+  target: number;
 }
 
 const parseExercises = (args: Array<string>): DailyExercises => {
-  if (args.length < 4) throw new Error("Not enough arguments")
+  if (args.length < 4) throw new Error("Not enough arguments");
   const targetArg: string = args[args.length - 1];
 
   if (isNaN(Number(targetArg))) {
-    throw new Error("Target is not a number")
+    throw new Error("Target is not a number");
   }
 
   const daysArgs: Array<string> = args.slice(2, args.length - 1);
-  for (let arg of daysArgs) {
+  for (const arg of daysArgs) {
     if (isNaN(Number(arg))) {
-      throw new Error("Daily exercises are not all numbers")
+      throw new Error("Daily exercises are not all numbers");
     }
   }
 
   return {
-    dailyExercises: daysArgs.map(arg => Number(arg)),
-    target: Number(targetArg)
-  }
-
-
-}
+    dailyExercises: daysArgs.map((arg) => Number(arg)),
+    target: Number(targetArg),
+  };
+};
 
 interface ExerciseInfo {
   periodLength: number;
@@ -68,8 +66,10 @@ const calculateExercises = (
 };
 
 try {
-  const {dailyExercises, target} = parseExercises(process.argv)
+  const { dailyExercises, target } = parseExercises(process.argv);
   console.log(calculateExercises(dailyExercises, target));
-} catch (err) {
-  console.log(err.message)
+} catch (error) {
+  if (error instanceof Error) {
+    console.log(error.message);
+  }
 }
