@@ -2,18 +2,17 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Icon } from "semantic-ui-react";
-import { useStateValue, addPatient } from "../state";
-import { Entry, Patient } from "../types";
+import { useStateValue, addPatient, setDiagnoses } from "../state";
+import { Diagnosis, Entry, Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnoses }, dispatch] = useStateValue();
 
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        console.log("Fetching " + id);
         const fetched = await axios.get<Patient>(
           `${apiBaseUrl}/patients/${id}`
         );
@@ -29,8 +28,25 @@ const PatientPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      try {
+        const fetched = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        dispatch(setDiagnoses(fetched.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (!diagnoses.length) {
+      void fetchDiagnoses();
+    }
+  }, []);
+
   const patient = patients[id];
   console.log(patient);
+  console.log(diagnoses);
   if (!patient) {
     return null;
   } else {
@@ -51,13 +67,22 @@ const PatientPage = () => {
         <h2>entries</h2>
         {patient.entries.map((entry: Entry) => (
           <div key={entry.id}>
-            <p>{entry.description}</p>
+            <p>
+              {entry.date} <i>{entry.description}</i>
+            </p>
             <ul>
               {!entry.diagnosisCodes
                 ? null
-                : entry.diagnosisCodes.map((code: string) => (
-                    <li key={code}>{code}</li>
-                  ))}
+                : entry.diagnosisCodes.map((code: string) => {
+                    const description: Diagnosis | undefined = diagnoses.find(
+                      (diagnosis) => diagnosis.code === code
+                    );
+                    return (
+                      <li key={code}>
+                        {code} {description ? description.name : null}
+                      </li>
+                    );
+                  })}
             </ul>
           </div>
         ))}
