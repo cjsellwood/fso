@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Icon } from "semantic-ui-react";
 import { useStateValue, addPatient } from "../state";
-import { Patient } from "../types";
+import { Entry, Patient } from "../types";
 import { apiBaseUrl } from "../constants";
 
 const PatientPage = () => {
@@ -48,6 +48,19 @@ const PatientPage = () => {
         </h1>
         <p>ssn: {patient.ssn}</p>
         <p>occupation: {patient.occupation}</p>
+        <h2>entries</h2>
+        {patient.entries.map((entry: Entry) => (
+          <div key={entry.id}>
+            <p>{entry.description}</p>
+            <ul>
+              {!entry.diagnosisCodes
+                ? null
+                : entry.diagnosisCodes.map((code: string) => (
+                    <li key={code}>{code}</li>
+                  ))}
+            </ul>
+          </div>
+        ))}
       </Container>
     );
   }
