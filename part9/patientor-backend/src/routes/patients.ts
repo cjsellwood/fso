@@ -17,4 +17,12 @@ router.post("/", (req, res) => {
   }
 });
 
+router.get("/:id", (req, res) => {
+  try {
+    res.send(patientsService.getPatient(req.params.id));
+  } catch (err) {
+    res.status(404).send(err.message);
+  }
+});
+
 export default router;
